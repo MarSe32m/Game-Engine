@@ -14,6 +14,7 @@ public class GameObject {
 	}
 	
 	public void render() {
+		// TODO: Render itself and render its children relative to this
 		for(GameObject child : children)
 			child.render();
 	}

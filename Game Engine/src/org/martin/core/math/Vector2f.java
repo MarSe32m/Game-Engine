@@ -53,4 +53,15 @@ public class Vector2f {
 		y += other.y;
 	}
 	
+	public void subtract(Vector2f other) {
+		x -= other.x;
+		y -= other.y;
+	}
+	
+	public float pseudoCrossProduct(Vector2f other) {
+		return x * other.y - y * other.x;
+	}
+	
+	
+	
 }
