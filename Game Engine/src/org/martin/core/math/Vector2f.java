@@ -48,4 +48,9 @@ public class Vector2f {
 		y *= scalar;
 	}
 	
+	public void add(Vector2f other) {
+		x += other.x;
+		y += other.y;
+	}
+	
 }
