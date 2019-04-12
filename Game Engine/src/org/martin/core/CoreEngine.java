@@ -131,7 +131,7 @@ public class CoreEngine {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			
 			renders++;
-			// Call RenderEngine
+			// Call RenderEngine methods
 			int error = glGetError();
 			if(error != GL_NO_ERROR)
 				System.err.println(error);
