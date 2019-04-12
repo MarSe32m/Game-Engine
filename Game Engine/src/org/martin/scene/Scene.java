@@ -6,7 +6,7 @@ public class Scene {
 	private CoreEngine coreEngine;
 	private GameObject rootObject;
 	
-	public void didPresent() {
+	public void didAppear() {
 		
 	}
 	
@@ -14,7 +14,7 @@ public class Scene {
 		
 	}
 	
-	public void update(float deltaTime) {
+	public void update() {
 		
 	}
 	

@@ -90,15 +90,12 @@ public class CoreEngine {
 		// Set up size callbacks, projection matrices etc.
 		
 		double timePassed = 0;
-		double deltaTime = 0;
-		float dt = 0;
-		double lastLoopTime = System.currentTimeMillis();
-		double lastUpdateTime = System.currentTimeMillis();
+		double lastUpdateTime = Time.getTimeMillis();
 		
 		int updates = 0;
 		int renders = 0;
 		
-		double lastTickRateCheck = System.currentTimeMillis();
+		double lastTickRateCheck = Time.getTimeMillis();
 		
 		while(!glfwWindowShouldClose(window)) {
 			glfwPollEvents();
@@ -108,16 +105,16 @@ public class CoreEngine {
 			while(timePassed >= tickRate) {
 				
 				updates++;
-				double updateTime = System.currentTimeMillis();
-				dt = (float)(updateTime - lastUpdateTime) / 1000.0f;
+				double updateTime = Time.getTimeMillis();
+				Time.setDelta((float)(updateTime - lastUpdateTime) / 1000.0f);
 				lastUpdateTime = updateTime;
 				
-				currentScene.update(dt);
+				currentScene.update();
 				//evaluateActions(dt); -> Actions Engine -> currentScene.didevaluateActions
 				//simulatePhysics(dt, currentScene); -> Physics Engine -> currentScene.didSimulatePhysics
 				//applyConstraints(dt); -> Constraints Engine -> currentScene.didApplyConstraints
 				
-				updateTime = System.currentTimeMillis() - updateTime;
+				updateTime = Time.getTimeMillis() - updateTime;
 				timePassed -= tickRate;
 				try {
 					long timeToSleep = (long) (tickRate * 1000 - timePassed);
@@ -128,22 +125,21 @@ public class CoreEngine {
 				}
 			}
 			
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			
 			
 			renders++;
 			// Call RenderEngine methods
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			// Have ^ line inside it
+			
 			int error = glGetError();
 			if(error != GL_NO_ERROR)
 				System.err.println(error);
 			
 			glfwSwapBuffers(window);
 			
-			deltaTime = (currentTime - lastLoopTime) / 1000.0;
-			lastLoopTime = currentTime;
-			timePassed += deltaTime;
-			
 			if(currentTime - lastTickRateCheck >= 1000) {
-				glfwSetWindowTitle(window, title + ", UPS: " + updates + ", FPS: " + renders + ", " + "delta time: " + dt);
+				glfwSetWindowTitle(window, title + ", UPS: " + updates + ", FPS: " + renders + ", " + "delta time: " + Time.getDeltaTime());
 
 				lastTickRateCheck = currentTime;
 				updates = 0;
@@ -156,10 +152,11 @@ public class CoreEngine {
 	public void presentScene(Scene scene) {
 		currentScene.willDisappear();
 		currentScene = scene;
-		scene.didPresent();
+		currentScene.didAppear();
 	}
 	
 	private void stop() {
+		// Clean up
 		glfwFreeCallbacks(window);
 		glfwDestroyWindow(window);
 		glfwTerminate();
@@ -167,13 +164,7 @@ public class CoreEngine {
 	}
 	
 	public void setPreferredFPS(int fps) {
-		if(fps > 300) {
-			tickRate = 1.0 / (double) 300;
-			System.err.println("Maximum FPS is 300");
-		} else {
-			tickRate = 1.0 / (double) fps;
-		}
-		
+		tickRate = fps > 300 ? 1.0 / (double) 300 : 1.0 / (double) fps;	
 	}
 	
 }
