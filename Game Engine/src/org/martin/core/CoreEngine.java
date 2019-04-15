@@ -37,6 +37,7 @@ public class CoreEngine {
 	
 	public void start(Scene scene) {
 		this.currentScene = scene;
+		this.currentScene.setCoreEngine(this);
 		new Thread(() -> initEngine(), "Engine Main Thread").start();
 	}
 	
@@ -152,6 +153,7 @@ public class CoreEngine {
 	public void presentScene(Scene scene) {
 		currentScene.willDisappear();
 		currentScene = scene;
+		currentScene.setCoreEngine(this);
 		currentScene.didAppear();
 	}
 	

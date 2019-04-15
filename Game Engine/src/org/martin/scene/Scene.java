@@ -22,4 +22,12 @@ public class Scene {
 		rootObject.render();
 	}
 	
+	public CoreEngine getCoreEngine() {
+		return coreEngine;
+	}
+	
+	public void setCoreEngine(CoreEngine engine) {
+		this.coreEngine = engine;
+	}
+	
 }
