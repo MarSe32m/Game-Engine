@@ -1,4 +1,4 @@
-package org.martin.core.math;
+package org.martin.math;
 
 import static java.lang.Math.*;
 
@@ -29,13 +29,13 @@ public class Vector2f {
 	}
 	
 	public void rotate(float radians) {
-		x = x * (float)cos(radians) - y * (float)sin(radians);
-		y = x * (float)sin(radians) + y * (float)cos(radians);
+		x = (float)(x * cos(radians) - y * sin(radians));
+		y = (float)(x * sin(radians) + y * cos(radians));
 	}
 	
 	public Vector2f rotated(float radians) {
-		float newX = x * (float)cos(radians) - y * (float)sin(radians);
-		float newY = x * (float)sin(radians) + y * (float)cos(radians);
+		float newX = (float)(x * cos(radians) - y * sin(radians));
+		float newY = (float)(x * sin(radians) + y * cos(radians));
 		return new Vector2f(newX, newY);
 	}
 	
