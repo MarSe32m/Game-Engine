@@ -2,9 +2,13 @@ package org.martin.scene;
 
 import org.martin.core.*;
 
-public class Scene {
+public abstract class Scene {
 	private CoreEngine coreEngine;
-	private GameObject rootObject;
+	protected GameObject rootObject;
+	
+	public Scene() {
+		rootObject = new GameObject();
+	}
 	
 	public void didAppear() {
 		
@@ -18,16 +22,24 @@ public class Scene {
 		
 	}
 	
-	public void render() {
+	public final void render() {
 		rootObject.render();
 	}
 	
-	public CoreEngine getCoreEngine() {
+	public final CoreEngine getCoreEngine() {
 		return coreEngine;
 	}
 	
-	public void setCoreEngine(CoreEngine engine) {
+	public final void setCoreEngine(CoreEngine engine) {
 		this.coreEngine = engine;
+	}
+	
+	public final GameObject getRootObject() {
+		return rootObject;
+	}
+	
+	public final void addChild(GameObject object) {
+		rootObject.addChild(object);
 	}
 	
 }

@@ -14,7 +14,7 @@ public class GameObject {
 	}
 	
 	public void render() {
-		// TODO: Render itself and render its children relative to this
+		// TODO: Render itself and render its children relative to this (aka. Scene graph)
 		for(GameObject child : children)
 			child.render();
 	}
