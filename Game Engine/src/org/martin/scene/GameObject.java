@@ -6,7 +6,7 @@ public class GameObject {
 	private static long lastObjectID = 0;
 	private long objectID;
 	private ArrayList<GameObject> children = new ArrayList<GameObject>();
-	
+	private boolean is2D = false;
 	private GameObject parent;
 	
 	public GameObject() {
@@ -14,11 +14,21 @@ public class GameObject {
 	}
 	
 	public void render() {
+		Stack<GameObject> renderStack = new Stack<GameObject>();
+		renderStack.push(this);
 		// TODO: Render itself and render its children relative to this (aka. Scene graph)
-		for(GameObject child : children)
-			child.render();
+		
+		for(GameObject child : children) {
+			child.render3D(renderStack);
+		}
 	}
 
+	private void render3D(Stack<GameObject> renderStack) {
+		for(GameObject object : renderStack) {
+			
+		}
+	}
+	
 	public ArrayList<GameObject> getChildren() {
 		return children;
 	}
