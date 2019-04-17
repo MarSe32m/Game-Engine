@@ -2,6 +2,8 @@ package org.martin.math;
 
 import static java.lang.Math.*;
 
+import org.joml.*;
+
 public class Vector3f {
 	public float x;
 	public float y;
@@ -38,10 +40,29 @@ public class Vector3f {
 		float length = length();
 		return new Vector3f(x / length, y / length, z / length);
 	}
+
+	private void rotateX(float r) {
+		y =(float)(y * cos(r) - z * sin(r));
+		z = (float)(y * sin(r) + z * cos(r));
+	}
+	
+	private void rotateY(float r) {
+		x = (float)(x * cos(r) + z * sin(r));
+		z = (float)(z * cos(r) - x * sin(r));
+	}
+	
+	private void rotateZ(float r) {
+		x = (float)(x * cos(r) - y * sin(r));
+		y = (float)(x * sin(r) + y * cos(r));
+	}
+	
+	
 	
 	// TODO: Implement
 	public void rotate(Vector3f euler) {
-		
+		rotateX(euler.x);
+		rotateY(euler.y);
+		rotateZ(euler.z);
 	}
 	
 	// TODO: Implement rotated
@@ -51,6 +72,10 @@ public class Vector3f {
 	
 	public float dot(Vector3f other) {
 		return x * other.x + y * other.y + z * other.z;
+	}
+	
+	public static float dot(Vector3f a, Vector3f b) {
+		return a.x * b.x + a.y * b.y + a.z * b.z;
 	}
 	
 	public void multiply(float scalar) {
@@ -79,6 +104,12 @@ public class Vector3f {
 		return new Vector3f(y * other.z - z * other.y,
 							z * other.x - x * other.z,
 							x * other.y - y * other.x);
+	}
+	
+	public Vector3f cross(Vector3f a, Vector3f b) {
+		return new Vector3f(a.y * b.z - a.z * b.y,
+							a.z * b.x - x * b.z,
+							a.x * b.y - y * b.x);
 	}
 	
 }
