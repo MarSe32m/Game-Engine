@@ -59,6 +59,10 @@ public class Vector3f {
 		z *= scalar;
 	}
 	
+	public void divide(float divident) {
+		multiply(1.0f/divident);
+	}
+	
 	public void add(Vector3f other) {
 		x += other.x;
 		y += other.y;
@@ -71,9 +75,10 @@ public class Vector3f {
 		z -= other.z;
 	}
 	
-	// TODO: Implement
 	public Vector3f cross(Vector3f other) {
-		return null;
+		return new Vector3f(y * other.z - z * other.y,
+							z * other.x - x * other.z,
+							x * other.y - y * other.x);
 	}
 	
 }
