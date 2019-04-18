@@ -32,6 +32,11 @@ public class Transform {
 	public void setRotation(Quaternion rotation) {
 		this.rotation = rotation.toEuler();
 		this.rotationQ = rotation;
+		
+	}
+	
+	public Vector3f getPosition() {
+		return translation.xyz();
 	}
 	
 	

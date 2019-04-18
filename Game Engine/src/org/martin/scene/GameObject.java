@@ -9,35 +9,31 @@ public class GameObject {
 	private long objectID;
 	private ArrayList<GameObject> children = new ArrayList<GameObject>();
 	private GameObject parent;
-	
-	private Vector3f position = new Vector3f();
-	
-	// Rotation in euler angles
-	private Vector3f rotation = new Vector3f();
+	private Transform transform = new Transform();
 	
 	public GameObject() {
 		objectID = GameObject.lastObjectID++;
 	}
 	
 	public void render() {
-		Stack<GameObject> renderStack = new Stack<GameObject>();
+		Stack<Transform> renderStack = new Stack<Transform>();
 		// TODO: Render itself and render its children relative to this (aka. Scene graph)
 		// TODO: Start straight out with a batch renderer so we don't have to do that optimization later
-		renderStack.push(this);
+		renderStack.push(transform);
 		for(GameObject child : children)
 			child.render(renderStack);
 	}
 
-	private void render(Stack<GameObject> renderStack) {
+	private void render(Stack<Transform> renderStack) {
 		//TODO: Render the current object
-		Vector3f posInScene = new Vector3f();
+		Vector3f posInScene = transform.getPosition();
 		
-		for(GameObject obj : renderStack)
-			posInScene.add(obj.position);
+		for(Transform transform : renderStack)
+			posInScene.add(transform.getPosition());
 		
-		renderStack.push(this);
+		renderStack.push(transform);
 		
-		for(GameObject object : renderStack)
+		for(GameObject object : children)
 			object.render(renderStack);
 		
 		renderStack.pop();
@@ -64,6 +60,10 @@ public class GameObject {
 	
 	public boolean equals(GameObject obj) {
 		return objectID == obj.objectID;
+	}
+	
+	public Transform getTransform() {
+		return transform;
 	}
 	
 }

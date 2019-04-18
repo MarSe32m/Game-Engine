@@ -1,4 +1,5 @@
 import org.martin.core.*;
+import org.martin.math.*;
 import org.martin.scene.*;
 
 public class Entry {
@@ -6,7 +7,6 @@ public class Entry {
 		CoreEngine engine = new CoreEngine(1280, 720, "Game Engine", 120);
 		engine.start(new Scene2D());
 	}
-	
 	
 	
 }

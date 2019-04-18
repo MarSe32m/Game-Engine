@@ -16,6 +16,10 @@ public class Vector4f {
 		z = 0.0f;
 		w = 0.0f;
 	}
+
+	public Vector3f xyz() {
+		return new Vector3f(x, y, z);
+	}
 	
 	
 	
