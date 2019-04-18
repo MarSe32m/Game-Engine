@@ -3,7 +3,7 @@ package org.martin.math;
 import static java.lang.Math.*;
 
 public class Matrix4f {
-public float matrix[] = new float[4 * 4];
+	public float matrix[] = new float[4 * 4];
 	
 	public static Matrix4f identity() {
 		Matrix4f result = new Matrix4f();
@@ -42,11 +42,31 @@ public float matrix[] = new float[4 * 4];
 		return matrix;
 	}
 	
+	public static Matrix4f translate(Vector4f translation) {
+		Matrix4f matrix = identity();
+		matrix.matrix[0 + 3 * 4] = translation.x;
+		matrix.matrix[1 + 3 * 4] = translation.y;
+		matrix.matrix[2 + 3 * 4] = translation.z;
+		return matrix;
+	}
+	
 	public static Matrix4f scale(float xScale, float yScale) {
 		Matrix4f matrix = identity();
 		matrix.matrix[0 + 0 * 4] = xScale;
 		matrix.matrix[1 + 1 * 4] = yScale;
 		return matrix;
+	}
+	
+	public static Matrix4f scale(float xScale, float yScale, float zScale) {
+		Matrix4f matrix = identity();
+		matrix.matrix[0 + 0 * 4] = xScale;
+		matrix.matrix[1 + 1 * 4] = yScale;
+		matrix.matrix[2 + 2 * 4] = zScale;
+		return matrix;
+	}
+	
+	public static Matrix4f scale(Vector3f scaling) {
+		return scale(scaling.x, scaling.y, scaling.z);
 	}
 	
 	public static Matrix4f rotate(float angle) {

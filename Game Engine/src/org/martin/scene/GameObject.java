@@ -12,6 +12,9 @@ public class GameObject {
 	
 	private Vector3f position = new Vector3f();
 	
+	// Rotation in euler angles
+	private Vector3f rotation = new Vector3f();
+	
 	public GameObject() {
 		objectID = GameObject.lastObjectID++;
 	}
