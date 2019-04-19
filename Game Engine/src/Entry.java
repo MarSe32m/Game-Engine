@@ -1,12 +1,8 @@
 import org.martin.core.*;
-import org.martin.math.*;
-import org.martin.scene.*;
+import org.martin.engineTesting.*;
 
 public class Entry {
 	public static void main(String[] args) {
-		CoreEngine engine = new CoreEngine(1280, 720, "Game Engine", 300);
-		engine.start(new Scene2D());
+		new CoreEngine(1280, 720, "Game Engine", 300).start(new GameScene());
 	}
-	
-	
 }

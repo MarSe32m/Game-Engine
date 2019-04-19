@@ -2,9 +2,9 @@ package org.martin.math;
 
 public class Transform {
 	
-	public Vector4f translation = new Vector4f();
+	private Vector4f translation = new Vector4f();
 	private Vector3f rotation = new Vector3f();
-	public Vector3f scale = new Vector3f(1.0f, 1.0f, 1.0f);
+	private Vector3f scale = new Vector3f(1.0f, 1.0f, 1.0f);
 	private Quaternion rotationQ = new Quaternion(1.0f, 0, 0, 0);
 	
 	public Matrix4f getTransformationMatrix() {
@@ -33,6 +33,46 @@ public class Transform {
 		this.rotation = rotation.toEuler();
 		this.rotationQ = rotation;
 		
+	}
+	
+	public void setScale(Vector3f scale) {
+		this.scale = scale;
+	}
+	
+	public void setXScale(float scale) {
+		this.scale.x = scale;
+	}
+	
+	public void setYScale(float scale) {
+		this.scale.y = scale;
+	}
+	
+	public void setZScale(float scale) {
+		this.scale.z = scale;
+	}
+	
+	public Vector3f getScale() {
+		return scale;
+	}
+	
+	public float getXScale() {
+		return scale.x;
+	}
+	
+	public float getYScale() {
+		return scale.y;
+	}
+	
+	public float getZScale() {
+		return scale.z;
+	}
+	
+	public void setPosition(Vector3f position) {
+		translation = new Vector4f(position);
+	}
+	
+	public void move(Vector3f direction) {
+		translation.add(direction);
 	}
 	
 	public Vector3f getPosition() {

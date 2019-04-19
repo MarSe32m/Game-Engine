@@ -152,6 +152,21 @@ public class Matrix4f {
 		return result;
 	}
 	
+	public static Matrix4f perspectiveProjection(float fov, float aspectRatio, float far, float near) {
+		Matrix4f result = Matrix4f.identity();
+		float y_scale = (float)((1f / tan(toRadians(fov / 2f))) * aspectRatio);
+		float x_scale = y_scale / aspectRatio;
+		float frustum_length = far - near;
+		
+		result.matrix[0 + 0 * 4] = x_scale;
+		result.matrix[1 + 1 * 4] = y_scale;
+		result.matrix[2 + 2 * 4] = -((far + near) / frustum_length);
+		result.matrix[3 + 2 * 4] = -1f;
+		result.matrix[2 + 3 * 4] = -((2 * near * far) / frustum_length);
+		result.matrix[3 + 3 * 4] = 0;
+		return result;
+	}
+	
 	public static Matrix4f transformationMatrix(Matrix4f translation, Matrix4f scale, Matrix4f rotation) {
 		return scale.multiply(rotation).multiply(translation);
 		

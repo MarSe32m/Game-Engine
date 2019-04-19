@@ -22,7 +22,7 @@
 	<classpathentry kind="lib" path="lib/lwjgl-opengl-javadoc.jar"/>
 	<classpathentry kind="lib" path="lib/lwjgl-opengl-natives-windows.jar"/>
 	<classpathentry kind="lib" path="lib/lwjgl-opengl-sources.jar"/>
-	<classpathentry kind="lib" path="lib/lwjgl-opengl.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl-opengl.jar" sourcepath="lib/lwjgl-opengl-sources.jar"/>
 	<classpathentry kind="lib" path="lib/lwjgl-sources.jar"/>
 	<classpathentry kind="lib" path="lib/lwjgl-stb-javadoc.jar"/>
 	<classpathentry kind="lib" path="lib/lwjgl-stb-natives-windows.jar"/>
@@ -32,5 +32,6 @@
 	<classpathentry kind="lib" path="lib/steamworks4j-1.8.0-javadoc.jar"/>
 	<classpathentry kind="lib" path="lib/steamworks4j-1.8.0-sources.jar"/>
 	<classpathentry kind="lib" path="lib/steamworks4j-1.8.0.jar"/>
+	<classpathentry kind="lib" path="lib/slick-util.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

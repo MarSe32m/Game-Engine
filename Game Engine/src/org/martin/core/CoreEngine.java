@@ -6,25 +6,29 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
-import java.nio.IntBuffer;
+import java.nio.*;
 
-import org.lwjgl.Version;
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWVidMode;
-import org.lwjgl.glfw.GLFWWindowSizeCallback;
-import org.lwjgl.opengl.GL;
-import org.lwjgl.system.MemoryStack;
-
+import org.lwjgl.*;
+import org.lwjgl.glfw.*;
+import org.lwjgl.opengl.*;
+import org.lwjgl.system.*;
+import org.martin.rendering.*;
 import org.martin.scene.*;
 
 public class CoreEngine {
 	private long window;
 	
-	private int width;
-	private int height;
+	private static int width;
+	private static int height;
 	private String title;
 	
+	private RenderEngine renderEngine;
+	
 	private Scene currentScene;
+	
+	private Camera camera = new Camera();
+	
+	
 	
 	private double tickRate;
 	
@@ -32,8 +36,8 @@ public class CoreEngine {
 	private Mouse mouse = new Mouse();
 	
 	public CoreEngine(int width, int height, String title, int fps) {
-		this.width = width;
-		this.height = height;
+		CoreEngine.width = width;
+		CoreEngine.height = height;
 		this.title = title;
 		if(fps <= 300)
 			this.tickRate = 1.0 / (double) fps;
@@ -90,25 +94,31 @@ public class CoreEngine {
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glViewport(0, 0, width, height);
 		System.out.println("OpenGL version: " + glGetString(GL_VERSION));
+		
+		renderEngine  = new RenderEngine();
+		
 		engineLoop();
 	}
 	
 	private void engineLoop() {
-		// Set up size callbacks, projection matrices etc.
-		
-		double timePassed = 0;
+		// TODO: Set up size callbacks, projection matrices etc.
+		setUpSizeCallBack();
+		double timePassed = -1;
 		double lastUpdateTime = Time.getTimeMillis();
-		
 		int updates = 0;
 		int renders = 0;
-		
 		double lastDynamicLoopTime = Time.getTimeMillis();
 		double dynamicDelta = 0;
-		
 		double lastTickRateCheck = Time.getTimeMillis();
 		
+		//TODO: Remove when render framework is more generic and robust
+		currentScene.didAppear();
+		
 		while(!glfwWindowShouldClose(window)) {
+			
+			
 			double currentTime = Time.getTimeMillis();
 			
 			while(timePassed >= tickRate) {
@@ -136,12 +146,12 @@ public class CoreEngine {
 				}
 			}
 			
-			
-			
 			renders++;
+			renderEngine.render(currentScene.getRootObject());
 			// Call RenderEngine methods
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			// Have ^ line inside it
+			// AFTER CLEAR, RENDER THE SCENE
 			
 			int error = glGetError();
 			if(error != GL_NO_ERROR)
@@ -161,7 +171,22 @@ public class CoreEngine {
 				renders = 0;
 			}
 		}
+		
+		
 		stop();
+	}
+	
+	private void setUpSizeCallBack() {
+		glfwSetWindowSizeCallback(window, new GLFWWindowSizeCallback() {
+			
+			@Override
+			public void invoke(long window, int width, int height) {
+				CoreEngine.width = width;
+				CoreEngine.height = height;
+				glViewport(0, 0, width, height);
+				
+			}
+		});
 	}
 	
 	public void presentScene(Scene scene) {
@@ -177,10 +202,20 @@ public class CoreEngine {
 	
 	private void stop() {
 		// Clean up
+		// TODO: Consider removing this line
+		currentScene.willDisappear();
 		glfwFreeCallbacks(window);
 		glfwDestroyWindow(window);
 		glfwTerminate();
 		glfwSetErrorCallback(null).free();
+	}
+	
+	public static int getWidth() {
+		return width;
+	}
+	
+	public static int getHeight() {
+		return height;
 	}
 	
 	public void setPreferredFPS(int fps) {

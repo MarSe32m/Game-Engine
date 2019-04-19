@@ -10,4 +10,5 @@ public class Scene2D extends Scene {
 	public void update() {
 		
 	}
+	
 }

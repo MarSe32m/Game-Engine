@@ -26,10 +26,12 @@ public class GameObject {
 
 	private void render(Stack<Transform> renderStack) {
 		//TODO: Render the current object
-		Vector3f posInScene = transform.getPosition();
+		Matrix4f transformation = transform.getTransformationMatrix();
+		
+		
 		
 		for(Transform transform : renderStack)
-			posInScene.add(transform.getPosition());
+			transformation.multiply(transform.getTransformationMatrix());
 		
 		renderStack.push(transform);
 		

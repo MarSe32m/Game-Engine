@@ -4,7 +4,7 @@ import org.martin.core.*;
 
 public abstract class Scene {
 	private CoreEngine coreEngine;
-	protected GameObject rootObject;
+	protected final GameObject rootObject;
 	
 	public Scene() {
 		rootObject = new GameObject();
@@ -20,10 +20,6 @@ public abstract class Scene {
 	
 	public void update() {
 		
-	}
-	
-	public final void render() {
-		rootObject.render();
 	}
 	
 	public final CoreEngine getCoreEngine() {
