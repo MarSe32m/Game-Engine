@@ -19,7 +19,7 @@ public class Matrix4f {
 		return result;
 	}
 	
-	public Matrix4f inverse() {
+	public Matrix4f inversed() {
 		Matrix4f result = identity();
 		float[] tmp = new float[9];
 		float determinant = 0.0f;
@@ -40,6 +40,10 @@ public class Matrix4f {
 		return result;
 	}
 	
+	public void inverse() {
+		matrix = inversed().matrix;
+	}
+	
 	public void transpose() {
 		for(int i = 0; i < 4; i++) {
 			for(int j = 0; j < i; j++) {
@@ -47,38 +51,6 @@ public class Matrix4f {
 				matrix[j + i * 4] = matrix[i + j * 4];
 				matrix[i + j * 4] = tempA;
 			}
-		}
-	}
-	
-	private void fill3x3With4x4(int x, int y, float[] array, float[] matrix) {
-		int index = 0;
-		for(int i = 0; i < 4; i++) {
-			for(int j = 0; j < 4; j++) {
-				if(i != x && j != y) {
-					array[index++] = matrix[j + i * 4];
-				}
-			}
-		}
-	}
-	
-	private float determinant3x3(float[] matrix) {
-		if(matrix.length != 9)
-			return 0;
-		return matrix[0 + 0 * 3] * matrix[1 + 1 * 3] * matrix[2 + 2 * 3] -
-			   matrix[0 + 0 * 3] * matrix[1 + 2 * 3] * matrix[2 + 1 * 3] -
-			   matrix[0 + 1 * 3] * matrix[1 + 0 * 3] * matrix[2 + 2 * 3] +
-			   matrix[0 + 1 * 3] * matrix[1 + 2 * 3] * matrix[2 + 0 * 3] +
-			   matrix[0 + 2 * 3] * matrix[1 + 0 * 3] * matrix[2 + 1 * 3] - 
-			   matrix[0 + 2 * 3] * matrix[1 + 1 * 3] * matrix[2 + 0 * 3];
-	}
-	
-	public void printMatrix() {
-		for(int j = 0; j < 4; j++) {
-			System.out.print("|");
-			for(int i = 0; i < 4; i++) {
-				System.out.print(" " + matrix[j + i * 4] + " ");
-			}
-			System.out.println("|");
 		}
 	}
 	
@@ -184,4 +156,27 @@ public class Matrix4f {
 		return scale.multiply(rotation).multiply(translation);
 		
 	}
+	
+	private void fill3x3With4x4(int x, int y, float[] array, float[] matrix) {
+		int index = 0;
+		for(int i = 0; i < 4; i++) {
+			for(int j = 0; j < 4; j++) {
+				if(i != x && j != y) {
+					array[index++] = matrix[j + i * 4];
+				}
+			}
+		}
+	}
+	
+	private float determinant3x3(float[] matrix) {
+		if(matrix.length != 9)
+			return 0;
+		return matrix[0 + 0 * 3] * matrix[1 + 1 * 3] * matrix[2 + 2 * 3] -
+			   matrix[0 + 0 * 3] * matrix[1 + 2 * 3] * matrix[2 + 1 * 3] -
+			   matrix[0 + 1 * 3] * matrix[1 + 0 * 3] * matrix[2 + 2 * 3] +
+			   matrix[0 + 1 * 3] * matrix[1 + 2 * 3] * matrix[2 + 0 * 3] +
+			   matrix[0 + 2 * 3] * matrix[1 + 0 * 3] * matrix[2 + 1 * 3] - 
+			   matrix[0 + 2 * 3] * matrix[1 + 1 * 3] * matrix[2 + 0 * 3];
+	}
+	
 }

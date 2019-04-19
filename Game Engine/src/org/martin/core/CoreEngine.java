@@ -28,11 +28,17 @@ public class CoreEngine {
 	
 	private double tickRate;
 	
+	private Keyboard keyboard = new Keyboard();
+	private Mouse mouse = new Mouse();
+	
 	public CoreEngine(int width, int height, String title, int fps) {
 		this.width = width;
 		this.height = height;
 		this.title = title;
-		this.tickRate = 1.0 / (double) fps;
+		if(fps <= 300)
+			this.tickRate = 1.0 / (double) fps;
+		else
+			this.tickRate = 1.0 / 300.0;
 	}
 	
 	public void start(Scene scene) {
@@ -70,13 +76,14 @@ public class CoreEngine {
 			GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 			glfwSetWindowPos(window, (vidmode.width() - pWidth.get(0)) / 2, (vidmode.height() - pHeight.get(0)) / 2);
 		}
-		//Input callback
-		//glfwSetKeyCallback(window, keyInput);
-		//glfwSetMouseButtonCallback(window, mouseInput);
+		
 		
 		glfwMakeContextCurrent(window);
 		glfwSwapInterval(0);
 		glfwShowWindow(window);
+
+		glfwSetKeyCallback(window, keyboard);
+		glfwSetMouseButtonCallback(window, mouse);
 		
 		GL.createCapabilities();
 		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
@@ -96,31 +103,34 @@ public class CoreEngine {
 		int updates = 0;
 		int renders = 0;
 		
+		double lastDynamicLoopTime = Time.getTimeMillis();
+		double dynamicDelta = 0;
+		
 		double lastTickRateCheck = Time.getTimeMillis();
 		
 		while(!glfwWindowShouldClose(window)) {
-			glfwPollEvents();
-			
-			double currentTime = System.currentTimeMillis();
+			double currentTime = Time.getTimeMillis();
 			
 			while(timePassed >= tickRate) {
-				
+				glfwPollEvents();
 				updates++;
 				double updateTime = Time.getTimeMillis();
-				Time.setDelta((float)(updateTime - lastUpdateTime) / 1000.0f);
-				lastUpdateTime = updateTime;
+				Time.setDelta((float)(currentTime - lastUpdateTime) / 1000.0f);
+				lastUpdateTime = currentTime;
 				
 				currentScene.update();
 				//evaluateActions(dt); -> Actions Engine -> currentScene.didevaluateActions
 				//simulatePhysics(dt, currentScene); -> Physics Engine -> currentScene.didSimulatePhysics
 				//applyConstraints(dt); -> Constraints Engine -> currentScene.didApplyConstraints
+				keyboard.flush();
+				mouse.flush();
 				
 				updateTime = Time.getTimeMillis() - updateTime;
 				timePassed -= tickRate;
 				try {
-					long timeToSleep = (long) (tickRate * 1000 - timePassed);
+					long timeToSleep = (long) (tickRate * 1000 - updateTime);
 					if (timeToSleep >= 5)
-						Thread.sleep(timeToSleep - 5);
+						Thread.sleep(timeToSleep - 4);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -139,6 +149,10 @@ public class CoreEngine {
 			
 			glfwSwapBuffers(window);
 			
+			dynamicDelta = (currentTime - lastDynamicLoopTime) / 1000.0;
+			lastDynamicLoopTime = currentTime;
+			timePassed += dynamicDelta;
+			
 			if(currentTime - lastTickRateCheck >= 1000) {
 				glfwSetWindowTitle(window, title + ", UPS: " + updates + ", FPS: " + renders + ", " + "delta time: " + Time.getDeltaTime());
 
@@ -151,6 +165,10 @@ public class CoreEngine {
 	}
 	
 	public void presentScene(Scene scene) {
+		setCurrentScene(scene);
+	}
+	
+	private void setCurrentScene(Scene scene) {
 		currentScene.willDisappear();
 		currentScene = scene;
 		currentScene.setCoreEngine(this);
