@@ -2,7 +2,7 @@ package org.martin.math;
 
 public class Transform {
 	
-	private Vector4f translation = new Vector4f();
+	private Vector4f translation = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
 	private Vector3f rotation = new Vector3f();
 	private Vector3f scale = new Vector3f(1.0f, 1.0f, 1.0f);
 	private Quaternion rotationQ = new Quaternion(1.0f, 0, 0, 0);

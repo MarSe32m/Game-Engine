@@ -12,8 +12,10 @@ import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
+import org.martin.input.*;
 import org.martin.rendering.*;
 import org.martin.scene.*;
+import org.martin.util.*;
 
 public class CoreEngine {
 	private long window;
@@ -26,23 +28,22 @@ public class CoreEngine {
 	
 	private Scene currentScene;
 	
-	private Camera camera = new Camera();
-	
-	
+	private Camera camera;
 	
 	private double tickRate;
-	
-	private Keyboard keyboard = new Keyboard();
-	private Mouse mouse = new Mouse();
+	private double preferredTickRate;
 	
 	public CoreEngine(int width, int height, String title, int fps) {
 		CoreEngine.width = width;
 		CoreEngine.height = height;
 		this.title = title;
-		if(fps <= 300)
+		if(fps <= 300) {
 			this.tickRate = 1.0 / (double) fps;
-		else
+			this.preferredTickRate = tickRate;
+		} else {
 			this.tickRate = 1.0 / 300.0;
+			this.preferredTickRate = tickRate;
+		}
 	}
 	
 	public void start(Scene scene) {
@@ -86,26 +87,32 @@ public class CoreEngine {
 		glfwSwapInterval(0);
 		glfwShowWindow(window);
 
-		glfwSetKeyCallback(window, keyboard);
-		glfwSetMouseButtonCallback(window, mouse);
+		glfwSetKeyCallback(window, Input.getKeyboard());
+		glfwSetMouseButtonCallback(window, Input.getMouse());
 		
 		GL.createCapabilities();
-		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glViewport(0, 0, width, height);
 		System.out.println("OpenGL version: " + glGetString(GL_VERSION));
 		
-		renderEngine  = new RenderEngine();
-		
+		setUpRenderEngine();
 		engineLoop();
 	}
 	
+	private void setUpRenderEngine() {
+		renderEngine  = new RenderEngine();
+		renderEngine.updateProjectionType(ProjectionType.PERSPECTIVE);
+		this.camera = renderEngine.camera;
+		Input.setScene(currentScene);
+		currentScene.init();
+		currentScene.didAppear();
+	}
+	
 	private void engineLoop() {
-		// TODO: Set up size callbacks, projection matrices etc.
+		Input.getMouse().invoke(window, 0, 0, 0);
 		setUpSizeCallBack();
-		double timePassed = -1;
+		double timePassed = -0.01;
 		double lastUpdateTime = Time.getTimeMillis();
 		int updates = 0;
 		int renders = 0;
@@ -113,8 +120,6 @@ public class CoreEngine {
 		double dynamicDelta = 0;
 		double lastTickRateCheck = Time.getTimeMillis();
 		
-		//TODO: Remove when render framework is more generic and robust
-		currentScene.didAppear();
 		
 		while(!glfwWindowShouldClose(window)) {
 			
@@ -123,35 +128,24 @@ public class CoreEngine {
 			
 			while(timePassed >= tickRate) {
 				glfwPollEvents();
-				updates++;
+				Input.update();
+				
 				double updateTime = Time.getTimeMillis();
 				Time.setDelta((float)(currentTime - lastUpdateTime) / 1000.0f);
 				lastUpdateTime = currentTime;
-				
 				currentScene.update();
 				//evaluateActions(dt); -> Actions Engine -> currentScene.didevaluateActions
 				//simulatePhysics(dt, currentScene); -> Physics Engine -> currentScene.didSimulatePhysics
 				//applyConstraints(dt); -> Constraints Engine -> currentScene.didApplyConstraints
-				keyboard.flush();
-				mouse.flush();
+				Input.flush();
 				
 				updateTime = Time.getTimeMillis() - updateTime;
 				timePassed -= tickRate;
-				try {
-					long timeToSleep = (long) (tickRate * 1000 - updateTime);
-					if (timeToSleep >= 5)
-						Thread.sleep(timeToSleep - 4);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				updates++;
 			}
 			
 			renders++;
 			renderEngine.render(currentScene.getRootObject());
-			// Call RenderEngine methods
-			//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			// Have ^ line inside it
-			// AFTER CLEAR, RENDER THE SCENE
 			
 			int error = glGetError();
 			if(error != GL_NO_ERROR)
@@ -165,7 +159,16 @@ public class CoreEngine {
 			
 			if(currentTime - lastTickRateCheck >= 1000) {
 				glfwSetWindowTitle(window, title + ", UPS: " + updates + ", FPS: " + renders + ", " + "delta time: " + Time.getDeltaTime());
-
+				if(updates > renders) {
+					if(tickRate >= 31)
+						tickRate -= 1;
+				} else {
+					if (tickRate < preferredTickRate) {
+						tickRate += 1;
+					}
+				}
+				
+				
 				lastTickRateCheck = currentTime;
 				updates = 0;
 				renders = 0;
@@ -178,13 +181,13 @@ public class CoreEngine {
 	
 	private void setUpSizeCallBack() {
 		glfwSetWindowSizeCallback(window, new GLFWWindowSizeCallback() {
-			
 			@Override
 			public void invoke(long window, int width, int height) {
+				//TODO: Add window events to the event dispatcher
 				CoreEngine.width = width;
 				CoreEngine.height = height;
 				glViewport(0, 0, width, height);
-				
+				renderEngine.updateProjectionMatrix();
 			}
 		});
 	}
@@ -194,9 +197,11 @@ public class CoreEngine {
 	}
 	
 	private void setCurrentScene(Scene scene) {
+		currentScene.init();
 		currentScene.willDisappear();
 		currentScene = scene;
 		currentScene.setCoreEngine(this);
+		Input.setScene(currentScene);
 		currentScene.didAppear();
 	}
 	
@@ -218,8 +223,20 @@ public class CoreEngine {
 		return height;
 	}
 	
+	public void setOrthographic() {
+		renderEngine.updateProjectionType(ProjectionType.ORTHOGRAPHIC);
+	}
+	
+	public void setPerspective() {
+		renderEngine.updateProjectionType(ProjectionType.PERSPECTIVE);
+	}
+	
+	public Camera getMainCamera() {
+		return camera;
+	}
+	
 	public void setPreferredFPS(int fps) {
-		tickRate = fps > 300 ? 1.0 / (double) 300 : 1.0 / (double) fps;	
+		preferredTickRate = fps > 300 ? 1.0 / (double) 300 : 1.0 / (double) fps;
 	}
 	
 }

@@ -1,40 +1,45 @@
 package org.martin.rendering;
 
-import java.util.*;
-
 import org.martin.core.*;
 import org.martin.math.*;
 import org.martin.scene.*;
 
 public class RenderEngine {
 
-	private MasterRenderer renderer = new MasterRenderer();
+	private MasterRenderer renderer;
 	
-	public Camera camera;
+	public Camera camera = new Camera();
+	
+	private Light defaultLight;
+	
+	public RenderEngine() {
+		defaultLight = new Light(new Vector3f(1.0f, 0.5f, 0.5f));
+		defaultLight.getTransform().setPosition(new Vector3f(2000f, 3000f, 2000f));
+		
+		renderer = new MasterRenderer();
+	}
 	
 	public void render(GameObject rootObject) {
-		Stack<Transform> stack = new Stack<Transform>();
-		stack.push(rootObject.getTransform());
-		renderer.batch(rootObject, rootObject.getTransform().getTransformationMatrix());
-		
+		rootObject.updateWorldSpaceMatrix(true);
 		for(GameObject object : rootObject.getChildren())
-			_render(object, stack);
-		renderer.render(camera);
+			_render(object);
+		
+		renderer.render(defaultLight, camera);
 	}
 
-	private void _render(GameObject object, Stack<Transform> stack) {
-		stack.push(object.getTransform());
-		Matrix4f transformationMatrix = Matrix4f.identity();
-		
-		for(Transform transform : stack)
-			transformationMatrix.multiply(transform.getTransformationMatrix());
-		
-		renderer.batch(object, transformationMatrix);
-		
+	private void _render(GameObject object) {
+		renderer.batch(object);
 		for(GameObject obj : object.getChildren())
-			_render(obj, stack);
+			_render(obj);
 		
-		stack.pop();
+	}
+	
+	public void updateProjectionType(ProjectionType type) {
+		renderer.setProjectionType(type);
+	}
+	
+	public void updateProjectionMatrix() {
+		renderer.updateProjectionMatrix();
 	}
 	
 }

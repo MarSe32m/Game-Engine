@@ -1,4 +1,4 @@
-package org.martin.rendering;
+package org.martin.rendering.models;
 
 public class RawModel {
 

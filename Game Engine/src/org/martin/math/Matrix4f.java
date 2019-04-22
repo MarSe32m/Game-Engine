@@ -59,7 +59,7 @@ public class Matrix4f {
 			matrix[i] *= scalar;
 	}
 	
-	public Matrix4f multiply(Matrix4f matrix) {
+	public Matrix4f multiplyLeft(Matrix4f matrix) {
 			Matrix4f result = new Matrix4f();
 			
 			for(int y = 0; y < 4; y++)
@@ -72,6 +72,19 @@ public class Matrix4f {
 					
 			
 			return result;
+	}
+	
+	public Matrix4f multiplyRight(Matrix4f matrix) {
+		Matrix4f result = new Matrix4f();
+		for(int y = 0; y < 4; y++) {
+			for(int x = 0; x < 4; x++) {
+				float sum = 0.0f;
+				for(int k = 0; k < 4; k++)
+					sum += matrix.matrix[k + y * 4] * this.matrix[x + k * 4];
+				result.matrix[x + y * 4] = sum;
+			}
+		}
+		return result;
 	}
 	
 	public static Matrix4f translate(Vector3f translation) {
@@ -152,9 +165,22 @@ public class Matrix4f {
 		return result;
 	}
 	
+	public static Matrix4f perspectiveProjection(float fov, float far, float near) {
+		Matrix4f result = Matrix4f.identity();
+		float scale = 1.0f / (float)tan(toRadians(fov * 0.5f));
+		result.matrix[0 + 0 * 4] = scale;
+		result.matrix[1 + 1 * 4] = scale;
+		result.matrix[2 + 2 * 4] = -far / (far - near);
+		result.matrix[3 + 2 * 4] = -far * near / (far - near);
+		result.matrix[2 + 3 * 4] = -1;
+		result.matrix[3 + 3 * 4] = 0;
+		
+		return result;
+	}
+	
 	public static Matrix4f perspectiveProjection(float fov, float aspectRatio, float far, float near) {
 		Matrix4f result = Matrix4f.identity();
-		float y_scale = (float)((1f / tan(toRadians(fov / 2f))) * aspectRatio);
+		float y_scale = (1f / (float)tan(toRadians(fov * 0.5f))) * aspectRatio;
 		float x_scale = y_scale / aspectRatio;
 		float frustum_length = far - near;
 		
@@ -167,9 +193,26 @@ public class Matrix4f {
 		return result;
 	}
 	
-	public static Matrix4f transformationMatrix(Matrix4f translation, Matrix4f scale, Matrix4f rotation) {
-		return scale.multiply(rotation).multiply(translation);
+	public static Matrix4f perspectiveProjection(float left, float right, float top, float bottom, float near, float far) {
+		Matrix4f result = Matrix4f.identity();
 		
+		result.matrix[0 + 0 * 4] = 2-0f * near / (right - left);
+		
+		result.matrix[1 + 1 * 4] = 2.0f * near / (top - bottom);
+		
+		result.matrix[0 + 2 * 4] = (right + left) / (right - left);
+		result.matrix[1 + 2 * 4] = (top + bottom) / (top - bottom);
+		result.matrix[2 + 2 * 4] = - (far + near) / (far - near);
+		result.matrix[3 + 2 * 4] = -1f;
+		
+		result.matrix[2 + 3 * 4] = - (2 * far * near) / (far - near);
+		result.matrix[3 + 3 * 4] = 0;
+		
+		return result;
+	}
+	
+	public static Matrix4f transformationMatrix(Matrix4f translation, Matrix4f scale, Matrix4f rotation) {
+		return translation.multiplyRight(rotation.multiplyRight(scale));
 	}
 	
 	private void fill3x3With4x4(int x, int y, float[] array, float[] matrix) {

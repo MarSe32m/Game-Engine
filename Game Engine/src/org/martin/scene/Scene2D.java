@@ -1,14 +1,15 @@
 package org.martin.scene;
 
-public class Scene2D extends Scene {
+public abstract class Scene2D extends Scene {
 	
-	public Scene2D() {
-		//TODO: Make the camera orthographic
+	public final void init() {
+		getCoreEngine().setOrthographic();
 	}
 	
 	@Override
-	public void update() {
-		
-	}
+	public abstract void update();
+
+	@Override
+	public abstract void willDisappear();
 	
 }

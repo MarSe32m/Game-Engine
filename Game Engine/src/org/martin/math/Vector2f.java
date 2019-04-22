@@ -63,6 +63,10 @@ public class Vector2f {
 		y -= other.y;
 	}
 	
+	public static Vector2f subtract(Vector2f from, Vector2f with) {
+		return new Vector2f(from.x - with.x, from.y - with.y);
+	}
+	
 	public float pseudoCrossProduct(Vector2f other) {
 		return x * other.y - y * other.x;
 	}

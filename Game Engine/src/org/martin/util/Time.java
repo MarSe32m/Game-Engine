@@ -1,9 +1,13 @@
-package org.martin.core;
+package org.martin.util;
 
 public class Time {
 	public static long SECOND_FROM_MILLIS = 1000000L;
 	
 	private static float deltaTime;
+	private static float elapsedTime;
+	
+	
+	private Time() {}
 	
 	public static long getTimeMillis() {
 		return System.currentTimeMillis();
@@ -19,6 +23,15 @@ public class Time {
 	
 	public static void setDelta(float delta) {
 		Time.deltaTime = delta;
+		elapsedTime += delta;
+	}
+	
+	public static float getElapsedTime() {
+		return elapsedTime;
+	}
+	
+	public static void resetElapsedTime() {
+		elapsedTime = 0;
 	}
 	
 }
