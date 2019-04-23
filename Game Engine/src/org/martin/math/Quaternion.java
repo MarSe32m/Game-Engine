@@ -19,6 +19,13 @@ public class Quaternion {
 		this.z = z;
 	}
 	
+	public Quaternion(Vector3f vector) {
+		this.w = 0f;
+		this.x = vector.x;
+		this.y = vector.y;
+		this.z = vector.z;
+	}
+	
 	public float dot(Quaternion other) {
 		return w * other.w + x * other.x + y * other.y + z * other.z;
 	}
@@ -53,6 +60,18 @@ public class Quaternion {
 		x *= scalar;
 		y *= scalar;
 		z *= scalar;
+	}
+	
+	public static Vector3f rotate(Vector3f vector, Quaternion quaternion) {
+		Quaternion newQuat = Quaternion.hamiltonProduct(Quaternion.hamiltonProduct(new Quaternion(vector), quaternion), quaternion.inverse());
+		return new Vector3f(newQuat.x, newQuat.y, newQuat.z);
+	}
+	
+	public static Quaternion hamiltonProduct(Quaternion left, Quaternion right) {
+		return new Quaternion(left.w * right.w - left.x * right.x - left.y * right.y - left.z * right.z,
+							  left.w * right.x + left.x * right.w + left.y * right.z - left.z * right.y,
+							  left.w * right.y - left.x * right.z + left.y * right.w + left.z * right.x,
+							  left.w * right.z + left.x * right.y - left.y * right.x + left.z * right.w);
 	}
 	
 	public static Quaternion rotation(float angle, float x, float y, float z) {

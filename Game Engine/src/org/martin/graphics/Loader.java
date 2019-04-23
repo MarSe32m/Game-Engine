@@ -1,4 +1,4 @@
-package org.martin.rendering;
+package org.martin.graphics;
 
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
@@ -12,8 +12,9 @@ import java.util.*;
 
 import org.lwjgl.*;
 import org.lwjgl.opengl.*;
-import org.martin.rendering.models.*;
-import org.martin.rendering.textures.*;
+import org.martin.graphics.models.*;
+import org.martin.graphics.textures.*;
+import org.martin.math.*;
 
 
 public class Loader {
@@ -36,8 +37,12 @@ public class Loader {
 		storeDataInAttributeList(0, 3, positions);
 		storeDataInAttributeList(1, 2, textureCoords);
 		unbindVAO();
-		return new RawModel(vaoID, indices.length);
+		RawModel result = new RawModel(vaoID, indices.length);
+		result.frustumRadius = MathExtras.minimalRadius(positions);
+		return result;
 	}
+	
+	
 	
 	public int loadTexture(String fileName) {
 		IntBuffer width = BufferUtils.createIntBuffer(1);

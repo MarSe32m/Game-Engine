@@ -22,10 +22,10 @@ public class Vector3f {
 	}
 	
 	public void normalize() {
-		float length = length();
-		x /= length;
-		y /= length;
-		z /= length;
+		float length = 1.0f / length();
+		x *= length;
+		y *= length;
+		z *= length;
 	}
 	
 	public float length() {

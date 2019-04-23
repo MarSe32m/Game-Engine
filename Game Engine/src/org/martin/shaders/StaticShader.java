@@ -1,7 +1,7 @@
 package org.martin.shaders;
 
+import org.martin.graphics.*;
 import org.martin.math.*;
-import org.martin.rendering.*;
 import org.martin.scene.*;
 
 public class StaticShader extends ShaderProgram {

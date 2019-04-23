@@ -1,4 +1,4 @@
-package org.martin.rendering.textures;
+package org.martin.graphics.textures;
 
 public class ModelTexture {
 

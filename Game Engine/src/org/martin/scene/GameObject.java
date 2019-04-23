@@ -2,8 +2,8 @@ package org.martin.scene;
 
 import java.util.*;
 
+import org.martin.graphics.*;
 import org.martin.math.*;
-import org.martin.rendering.models.*;
 
 public class GameObject {
 	private static long lastObjectID = 0;
@@ -18,6 +18,8 @@ public class GameObject {
 	private boolean wSM_isDirty = true;
 	
 	private TexturedModel texturedModel;
+	
+	private float frustumRadius = 0.5f;
 	
 	public GameObject() {
 		objectID = GameObject.lastObjectID++;
@@ -45,6 +47,10 @@ public class GameObject {
 	
 	public boolean equals(GameObject obj) {
 		return objectID == obj.objectID;
+	}
+	
+	public GameObject getParent() {
+		return parent;
 	}
 	
 	public Transform getTransform() {
@@ -116,10 +122,16 @@ public class GameObject {
 	}
 	
 	public void setModel(TexturedModel model) {
+		this.frustumRadius = model.getFrustumRadius();
 		this.texturedModel = model;
 	}
 	
+	public float getCullingRadius() {
+		return frustumRadius;
+	}
+	
 	public void updateWorldSpaceMatrix(boolean fromRoot) {
+		wSM_isDirty = transform.changed();
 		if (fromRoot) {
 			worldSpaceMatrix = transform.getTransformationMatrix();
 			if(wSM_isDirty) {

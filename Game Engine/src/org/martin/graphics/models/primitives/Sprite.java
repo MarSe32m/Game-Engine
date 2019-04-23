@@ -1,8 +1,8 @@
-package org.martin.rendering.models.primitives;
+package org.martin.graphics.models.primitives;
 
-import org.martin.rendering.*;
-import org.martin.rendering.models.*;
-import org.martin.rendering.textures.*;
+import org.martin.graphics.models.*;
+import org.martin.graphics.textures.*;
+import org.martin.graphics.*;
 
 public final class Sprite extends TexturedModel {
 

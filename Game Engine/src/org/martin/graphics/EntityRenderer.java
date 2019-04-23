@@ -1,4 +1,4 @@
-package org.martin.rendering;
+package org.martin.graphics;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
@@ -7,17 +7,13 @@ import static org.lwjgl.opengl.GL30.*;
 
 import java.util.*;
 
-import org.martin.core.*;
-import org.martin.math.*;
-import org.martin.rendering.models.*;
+import org.martin.graphics.models.*;
 import org.martin.scene.*;
 import org.martin.shaders.*;
 
 public class EntityRenderer {
 
 	private StaticShader shader;
-	
-	private Camera camera;
 	
 	public EntityRenderer(StaticShader shader) {
 		this.shader = shader;
@@ -52,15 +48,5 @@ public class EntityRenderer {
 		//glDisableVertexAttribArray(2);
 		glBindVertexArray(0);
 	}	
-	
-	
-	
-	public void setCamera(Camera camera) {
-		this.camera = camera;
-	}
-	
-	public Camera getCamera() {
-		return camera;
-	}
 	
 }

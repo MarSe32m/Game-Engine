@@ -1,7 +1,8 @@
-package org.martin.rendering.models.primitives;
+package org.martin.graphics.models.primitives;
 
-import org.martin.rendering.*;
-import org.martin.rendering.models.*;
+import org.martin.graphics.*;
+import org.martin.graphics.models.*;
+import org.martin.math.*;
 
 public class Cube extends TexturedModel {
 
@@ -16,6 +17,7 @@ public class Cube extends TexturedModel {
 	public Cube() {
 		super(null, null);
 		this.rawModel = Loader.getInstance().loadToVAO(vertices, textureCoords, indices);
+		this.frustumRadius = MathExtras.minimalRadius(vertices);
 		this.texture = Loader.getInstance().loadModelTexture("texture");
 	}
 

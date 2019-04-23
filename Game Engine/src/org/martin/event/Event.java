@@ -1,7 +1,6 @@
 package org.martin.event;
 
 public class Event {
-
 	public enum Type {
 		MOUSE_PRESSED,
 		MOUSE_RELEASED,
@@ -20,5 +19,4 @@ public class Event {
 	public Type getType() {
 		return type;
 	}
-	
 }

@@ -1,4 +1,4 @@
-package org.martin.rendering;
+package org.martin.graphics;
 
 public enum ProjectionType {
 	PERSPECTIVE,

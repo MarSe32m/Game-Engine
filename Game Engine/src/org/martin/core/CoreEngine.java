@@ -12,8 +12,8 @@ import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
+import org.martin.graphics.*;
 import org.martin.input.*;
-import org.martin.rendering.*;
 import org.martin.scene.*;
 import org.martin.util.*;
 
@@ -102,7 +102,6 @@ public class CoreEngine {
 	
 	private void setUpRenderEngine() {
 		renderEngine  = new RenderEngine();
-		renderEngine.updateProjectionType(ProjectionType.PERSPECTIVE);
 		this.camera = renderEngine.camera;
 		Input.setScene(currentScene);
 		currentScene.init();
@@ -224,11 +223,11 @@ public class CoreEngine {
 	}
 	
 	public void setOrthographic() {
-		renderEngine.updateProjectionType(ProjectionType.ORTHOGRAPHIC);
+		renderEngine.setProjectionType(ProjectionType.ORTHOGRAPHIC);
 	}
 	
 	public void setPerspective() {
-		renderEngine.updateProjectionType(ProjectionType.PERSPECTIVE);
+		renderEngine.setProjectionType(ProjectionType.PERSPECTIVE);
 	}
 	
 	public Camera getMainCamera() {

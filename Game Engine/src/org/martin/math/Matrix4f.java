@@ -87,6 +87,13 @@ public class Matrix4f {
 		return result;
 	}
 	
+	public Vector4f multiplyRight(Vector4f v) {
+		return new Vector4f(v.x * matrix[0 + 0 * 4] + v.y * matrix[0 + 1 * 4] + v.z * matrix[0 + 2 * 4] + v.w * matrix[0 + 3 * 4],
+							v.x * matrix[1 + 0 * 4] + v.y * matrix[1 + 1 * 4] + v.z * matrix[1 + 2 * 4] + v.w * matrix[1 + 3 * 4],
+							v.x * matrix[2 + 0 * 4] + v.y * matrix[2 + 1 * 4] + v.z * matrix[2 + 2 * 4] + v.w * matrix[2 + 3 * 4],
+							v.x * matrix[3 + 0 * 4] + v.y * matrix[3 + 1 * 4] + v.z * matrix[3 + 2 * 4] + v.w * matrix[3 + 3 * 4]);
+	}
+	
 	public static Matrix4f translate(Vector3f translation) {
 		Matrix4f matrix = identity();
 		matrix.matrix[0 + 3 * 4] = translation.x;
@@ -165,20 +172,20 @@ public class Matrix4f {
 		return result;
 	}
 	
-	public static Matrix4f perspectiveProjection(float fov, float far, float near) {
-		Matrix4f result = Matrix4f.identity();
-		float scale = 1.0f / (float)tan(toRadians(fov * 0.5f));
-		result.matrix[0 + 0 * 4] = scale;
-		result.matrix[1 + 1 * 4] = scale;
-		result.matrix[2 + 2 * 4] = -far / (far - near);
-		result.matrix[3 + 2 * 4] = -far * near / (far - near);
-		result.matrix[2 + 3 * 4] = -1;
-		result.matrix[3 + 3 * 4] = 0;
-		
-		return result;
-	}
+//	public static Matrix4f perspectiveProjection(float fov, float far, float near) {
+//		Matrix4f result = Matrix4f.identity();
+//		float scale = 1.0f / (float)tan(toRadians(fov * 0.5f));
+//		result.matrix[0 + 0 * 4] = scale;
+//		result.matrix[1 + 1 * 4] = scale;
+//		result.matrix[2 + 2 * 4] = -far / (far - near);
+//		result.matrix[3 + 2 * 4] = -far * near / (far - near);
+//		result.matrix[2 + 3 * 4] = -1;
+//		result.matrix[3 + 3 * 4] = 0;
+//		
+//		return result;
+//	}
 	
-	public static Matrix4f perspectiveProjection(float fov, float aspectRatio, float far, float near) {
+	public static Matrix4f perspectiveProjection(float aspectRatio, float fov, float far, float near) {
 		Matrix4f result = Matrix4f.identity();
 		float y_scale = (1f / (float)tan(toRadians(fov * 0.5f))) * aspectRatio;
 		float x_scale = y_scale / aspectRatio;
