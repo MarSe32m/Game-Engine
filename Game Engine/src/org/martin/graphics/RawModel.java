@@ -20,4 +20,8 @@ public class RawModel {
 		return vertexCount;
 	}
 	
+	public float getFrustumRadius() {
+		return frustumRadius;
+	}
+	
 }

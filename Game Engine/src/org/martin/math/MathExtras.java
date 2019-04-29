@@ -50,4 +50,14 @@ public class MathExtras {
 		return (float)Math.sqrt(x * x + y * y + z * z);
 	}
 	
+	public static Vector3f lerp(Vector3f start, Vector3f end, float t) {
+		return new Vector3f(lerp(start.x, end.x, t), 
+							lerp(start.y, end.y, t), 
+							lerp(start.z, end.z, t));
+	}
+	
+	public static float lerp(float start, float end, float t) {
+		return start + (end - start) * t;
+	}
+	
 }

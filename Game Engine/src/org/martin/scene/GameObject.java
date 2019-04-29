@@ -15,31 +15,35 @@ public class GameObject {
 	private Transform transform = new Transform();
 	
 	private Matrix4f worldSpaceMatrix = transform.getTransformationMatrix();
-	private boolean wSM_isDirty = true;
 	
 	private TexturedModel texturedModel;
 	
 	private float frustumRadius = 0.5f;
+	private float originalFrustumRadius = 0.5f;
+	
+	boolean is2D = false;
+	
+	public boolean isHidden = false;
 	
 	public GameObject() {
 		objectID = GameObject.lastObjectID++;
 	}
 	
-	public ArrayList<GameObject> getChildren() {
+	public final ArrayList<GameObject> getChildren() {
 		return children;
 	}
 	
-	public void addChild(GameObject object) {
+	public final void addChild(GameObject object) {
 		children.add(object);
 		object.parent = this;
 	}
 	
-	private void removeChild(GameObject object) {
+	private final void removeChild(GameObject object) {
 		children.remove(object);
 		
 	}
 	
-	public void removeFromParent() {
+	public final void removeFromParent() {
 		if(parent != null)
 			parent.removeChild(this);
 		parent = null;
@@ -49,89 +53,87 @@ public class GameObject {
 		return objectID == obj.objectID;
 	}
 	
-	public GameObject getParent() {
+	public final GameObject getParent() {
 		return parent;
 	}
 	
-	public Transform getTransform() {
-		wSM_isDirty = true;
+	public final Transform getTransform() {
 		return transform;
 	}
 	
-	public void setPosition(float x, float y, float z) {
+	public final void setPosition(float x, float y, float z) {
 		transform.setPosition(new Vector3f(x, y, z));
-		wSM_isDirty = true;
 	}
 	
-	public void setPosition(Vector3f position) {
+	public final void setPosition(Vector3f position) {
 		transform.setPosition(position);
-		wSM_isDirty = true;
 	}
 	
-	public void move(Vector3f direction) {
+	public final void move(Vector3f direction) {
 		transform.move(direction);
-		wSM_isDirty = true;
 	}
 	
-	public void move(float x, float y, float z) {
+	public final void move(float x, float y, float z) {
 		transform.move(new Vector3f(x, y, z));
-		wSM_isDirty = true;
 	}
 	
-	public void setRotation(Quaternion rotation) {
+	public final void setRotation(Quaternion rotation) {
 		transform.setRotation(rotation);
-		wSM_isDirty = true;
 	}
 	
-	public void setRotation(Vector3f euler) {
+	public final void setRotation(Vector3f euler) {
 		transform.setRotation(euler);
-		wSM_isDirty = true;
 	}
 	
-	public void setScale(float x, float y, float z) {
-		transform.setScale(new Vector3f(x, y, z));
-		wSM_isDirty = true;
-	}
-	
-	public void setXScale(float x) {
+	public final void setScale(float x, float y, float z) {
 		transform.setXScale(x);
-		wSM_isDirty = true;
-	}
-	
-	public void setYScale(float y) {
-		transform.setYScale(y);;
-		wSM_isDirty = true;
-	}
-	
-	public void setZScale(float z) {
+		transform.setYScale(y);
 		transform.setZScale(z);
-		wSM_isDirty = true;
+	}
+	
+	public final void setXScale(float x) {
+		transform.setXScale(x);
+		if(x > transform.getYScale() && x > transform.getZScale())
+			frustumRadius = originalFrustumRadius * x;
+	}
+	
+	public final void setYScale(float y) {
+		transform.setYScale(y);
+		if(y > transform.getXScale() && y > transform.getZScale())
+			frustumRadius = originalFrustumRadius * y;
+	}
+	
+	public final void setZScale(float z) {
+		transform.setZScale(z);
+		if(z > transform.getXScale() && z > transform.getYScale())
+			frustumRadius = originalFrustumRadius * z;
 	}
 	
 	
-	public Matrix4f getWorldSpaceMatrix() {
+	public final Matrix4f getWorldSpaceMatrix() {
 		return worldSpaceMatrix;
 	}
 	
-	public void setWorldSpaceMatrix(Matrix4f matrix) {
+	public final void setWorldSpaceMatrix(Matrix4f matrix) {
 		worldSpaceMatrix = matrix;
 	}
 	
-	public TexturedModel getModel() {
+	public final TexturedModel getModel() {
 		return texturedModel;
 	}
 	
-	public void setModel(TexturedModel model) {
+	public final void setModel(TexturedModel model) {
+		this.originalFrustumRadius = this.frustumRadius;
 		this.frustumRadius = model.getFrustumRadius();
 		this.texturedModel = model;
 	}
 	
-	public float getCullingRadius() {
+	public final float getCullingRadius() {
 		return frustumRadius;
 	}
 	
-	public void updateWorldSpaceMatrix(boolean fromRoot) {
-		wSM_isDirty = transform.changed();
+	public final void updateWorldSpaceMatrix(boolean fromRoot) {
+		boolean wSM_isDirty = transform.changed();
 		if (fromRoot) {
 			worldSpaceMatrix = transform.getTransformationMatrix();
 			if(wSM_isDirty) {
@@ -139,7 +141,7 @@ public class GameObject {
 				updateChildrenWorldSpaceMatrix();
 			} else {
 				for(GameObject child : children) {
-					if(child.wSM_isDirty) {
+					if(child.transform.changed()) {
 						child.worldSpaceMatrix = worldSpaceMatrix.multiplyRight(child.getTransform().getTransformationMatrix());
 					}
 					child.updateWorldSpaceMatrix(false);
@@ -156,8 +158,7 @@ public class GameObject {
 		}
 	}
 	
-	private void updateChildrenWorldSpaceMatrix() {
-		wSM_isDirty = false;
+	private final void updateChildrenWorldSpaceMatrix() {
 		for(GameObject child : children) {
 			child.worldSpaceMatrix = worldSpaceMatrix.multiplyRight(child.transform.getTransformationMatrix());
 			child.updateChildrenWorldSpaceMatrix();

@@ -12,4 +12,10 @@ public abstract class Scene2D extends Scene {
 	@Override
 	public abstract void willDisappear();
 	
+	@Override
+	public final void addChild(GameObject object) {
+		object.is2D = true;
+		super.addChild(object);
+	}
+	
 }

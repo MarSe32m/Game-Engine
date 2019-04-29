@@ -14,14 +14,10 @@ public class MasterRenderer {
 
 	StaticShader shader = new StaticShader();
 	private EntityRenderer renderer = new EntityRenderer(shader);
-	
-	
-	
-	
 	private Map<TexturedModel, List<GameObject>> batch = new HashMap<TexturedModel, List<GameObject>>();
 	
 	public MasterRenderer() {
-		
+		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 	}
 	
 	void render(Light defaultLight, Camera camera) {
@@ -47,9 +43,8 @@ public class MasterRenderer {
 	}
 	
 	public void prepare() {
-		glEnable(GL_DEPTH_TEST);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+		glEnable(GL_DEPTH_TEST);
 	}
 	
 	public void cleanUp() {

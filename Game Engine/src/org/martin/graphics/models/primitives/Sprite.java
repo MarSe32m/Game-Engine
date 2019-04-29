@@ -27,6 +27,7 @@ public final class Sprite extends TexturedModel {
 		setUpVertices(width, height);
 		this.rawModel = Loader.getInstance().loadToVAO(vertices, textureCoords, indices);
 		this.texture = Loader.getInstance().loadModelTexture(textureName);
+		frustumRadius = (float)Math.sqrt(this.texture.getWidth() * this.texture.getWidth() + this.texture.getHeight() * this.texture.getHeight()) / 2.0f;
 	}
 	
 	public Sprite(String textureName) {
@@ -34,6 +35,7 @@ public final class Sprite extends TexturedModel {
 		this.texture = Loader.getInstance().loadModelTexture(textureName);
 		setUpVertices(this.texture.getWidth(), this.texture.getHeight());
 		this.rawModel = Loader.getInstance().loadToVAO(vertices, textureCoords, indices);
+		frustumRadius = (float)Math.sqrt(this.texture.getWidth() * this.texture.getWidth() + this.texture.getHeight() * this.texture.getHeight()) / 2.0f;
 	}
 
 	private void setUpVertices(float width, float height) {

@@ -77,7 +77,8 @@ public class Quaternion {
 	public static Quaternion rotation(float angle, float x, float y, float z) {
 		final float a = angle / 2.0f;
 		final float sin = (float) sin(a);
-		return new Quaternion((float)cos(a), sin * x, sin * y, sin * z).normalized();
+		Quaternion result = new Quaternion((float)cos(a), sin * x, sin * y, sin * z);
+		return result.normalized();
 	}
 	
 	public static Quaternion fromEuler(Vector3f euler) {

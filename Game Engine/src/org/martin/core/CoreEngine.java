@@ -20,8 +20,9 @@ import org.martin.util.*;
 public class CoreEngine {
 	private long window;
 	
-	private static int width;
-	private static int height;
+	private static int width, height;
+	private static float originalWidth, originalHeight;
+	
 	private String title;
 	
 	private RenderEngine renderEngine;
@@ -36,6 +37,8 @@ public class CoreEngine {
 	public CoreEngine(int width, int height, String title, int fps) {
 		CoreEngine.width = width;
 		CoreEngine.height = height;
+		CoreEngine.originalWidth = width;
+		CoreEngine.originalHeight = height;
 		this.title = title;
 		if(fps <= 300) {
 			this.tickRate = 1.0 / (double) fps;
@@ -121,8 +124,6 @@ public class CoreEngine {
 		
 		
 		while(!glfwWindowShouldClose(window)) {
-			
-			
 			double currentTime = Time.getTimeMillis();
 			
 			while(timePassed >= tickRate) {
@@ -173,8 +174,6 @@ public class CoreEngine {
 				renders = 0;
 			}
 		}
-		
-		
 		stop();
 	}
 	
@@ -185,8 +184,9 @@ public class CoreEngine {
 				//TODO: Add window events to the event dispatcher
 				CoreEngine.width = width;
 				CoreEngine.height = height;
-				glViewport(0, 0, width, height);
+				resize(width, height);
 				renderEngine.updateProjectionMatrix();
+				glViewport(0, 0, width, height);
 			}
 		});
 	}
@@ -220,6 +220,20 @@ public class CoreEngine {
 	
 	public static int getHeight() {
 		return height;
+	}
+	
+	public static float getOriginalWidth() {
+		return originalWidth;
+	}
+	public static float getOriginalHeight() {
+		return originalHeight;
+	}
+	
+	public static void resize(int width, int height) {
+		CoreEngine.width = width;
+		CoreEngine.height = height;
+		originalWidth = width;
+		originalHeight = height;
 	}
 	
 	public void setOrthographic() {

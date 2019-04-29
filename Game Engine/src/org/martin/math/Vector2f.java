@@ -30,6 +30,8 @@ public class Vector2f {
 	}
 	
 	public Vector2f normalized() {
+		if(length() == 0)
+			return new Vector2f();
 		return new Vector2f(x / length(), y / length());
 	}
 	
@@ -56,6 +58,18 @@ public class Vector2f {
 	public void add(Vector2f other) {
 		x += other.x;
 		y += other.y;
+	}
+	
+	public Vector2f added(Vector2f other) {
+		return new Vector2f(x + other.x, y + other.y);
+	}
+	
+	public float distanceSquared(Vector2f other) {
+		return new Vector2f(x - other.x, y - other.y).lengthSquared();
+	}
+	
+	public float distance(Vector2f other) {
+		return new Vector2f(x - other.x, y - other.y).length();
 	}
 	
 	public void subtract(Vector2f other) {

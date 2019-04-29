@@ -12,7 +12,7 @@ public class GameScene extends Scene3D {
 	GameObject object = new GameObject();
 	GameObject object2 = new GameObject();
 
-	Cube cube;;
+	Cube cube;
 	
 	@Override
 	public void didAppear() {

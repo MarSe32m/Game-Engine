@@ -45,7 +45,7 @@ public abstract class Scene implements EventListener {
 		return rootObject;
 	}
 	
-	public final void addChild(GameObject object) {
+	public void addChild(GameObject object) {
 		rootObject.addChild(object);
 	}
 	

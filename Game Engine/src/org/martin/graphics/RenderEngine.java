@@ -31,12 +31,32 @@ public class RenderEngine {
 	}
 
 	private void _render(GameObject object) {
-		if(frustumCull(object, object.getCullingRadius()))
+		if(object.isHidden)
+			return;
+		if(type == ProjectionType.PERSPECTIVE) {
+			if(frustumCull(object, object.getCullingRadius()))
+				renderer.batch(object);
+		} else {
+			//TODO: Proper 2D object culling
 			renderer.batch(object);
+			//if(orthogonalCull(object))
+				
+		}
 		
 		for(GameObject obj : object.getChildren())
 			_render(obj);
 		
+	}
+	
+	private boolean orthogonalCull(GameObject object) {
+		Matrix4f worldSpaceMatrix = object.getParent().getWorldSpaceMatrix();
+		Vector2f worldSpacePos = worldSpaceMatrix.multiplyRight(object.getTransform().getTranslation()).xyz().xy().rotated(-camera.getTransform().getRotation().z);
+		Vector2f cameraPos = camera.getTransform().getPosition().xy();
+		Vector2f towardsCamera = Vector2f.subtract(cameraPos, worldSpacePos).normalized();
+		towardsCamera.multiply(object.getCullingRadius());
+		worldSpacePos.subtract(cameraPos);
+		worldSpacePos.add(towardsCamera);
+		return camera.isPointInside(worldSpacePos);
 	}
 	
 	private boolean frustumCull(GameObject object, float radius) {

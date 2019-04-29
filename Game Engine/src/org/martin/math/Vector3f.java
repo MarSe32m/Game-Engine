@@ -100,6 +100,10 @@ public class Vector3f {
 		z -= other.z;
 	}
 	
+	public Vector2f xy() {
+		return new Vector2f(x, y);
+	}
+	
 	public Vector3f cross(Vector3f other) {
 		return new Vector3f(y * other.z - z * other.y,
 							z * other.x - x * other.z,
