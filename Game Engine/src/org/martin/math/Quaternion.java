@@ -52,7 +52,7 @@ public class Quaternion {
 	}
 	
 	public float norm() {
-		return (float)sqrt(w * w + x * x + y * y + z * z);
+		return (float) Math.sqrt(w * w + x * x + y * y + z * z);
 	}
 	
 	public void multiply(float scalar) {
@@ -62,9 +62,24 @@ public class Quaternion {
 		z *= scalar;
 	}
 	
+	public Vector3f xyz() {
+		return new Vector3f(x, y, z);
+	}
+	
+	//TODO: Optimize
 	public static Vector3f rotate(Vector3f vector, Quaternion quaternion) {
-		Quaternion newQuat = Quaternion.hamiltonProduct(Quaternion.hamiltonProduct(new Quaternion(vector), quaternion), quaternion.inverse());
-		return new Vector3f(newQuat.x, newQuat.y, newQuat.z);
+		Vector3f u = quaternion.xyz();
+		float s = quaternion.w;
+		Vector3f result = u.multiplied(2.0f * u.dot(vector));
+		result.add(vector.multiplied(s * s - u.lengthSquared()));
+		result.add(Vector3f.cross(u, vector).multiplied(2.0f * s));
+		return result;
+		///Quaternion p = new Quaternion(vector);
+		//Quaternion q = quaternion;
+		//Quaternion qPrime = quaternion.conjugate();
+		//Quaternion res = Quaternion.hamiltonProduct(Quaternion.hamiltonProduct(q, p), qPrime);
+		//Quaternion newQuat = Quaternion.hamiltonProduct(quaternion, Quaternion.hamiltonProduct(new Quaternion(vector), quaternion.inverse()));
+		//return new Vector3f(res.x, res.y, res.z);
 	}
 	
 	public static Quaternion hamiltonProduct(Quaternion left, Quaternion right) {
@@ -77,8 +92,10 @@ public class Quaternion {
 	public static Quaternion rotation(float angle, float x, float y, float z) {
 		final float a = angle / 2.0f;
 		final float sin = (float) sin(a);
-		Quaternion result = new Quaternion((float)cos(a), sin * x, sin * y, sin * z);
-		return result.normalized();
+		final float cos = (float) cos(a);
+		Quaternion result = new Quaternion(cos, sin * x, sin * y, sin * z);
+		result.normalize();
+		return result;
 	}
 	
 	public static Quaternion fromEuler(Vector3f euler) {
@@ -146,17 +163,18 @@ public class Quaternion {
 		final float y2 = y * y;
 		final float z2 = z * z;
 		matrix.matrix[0 + 0 * 4] = 1 - 2 * (y2 + z2);
-		matrix.matrix[1 + 0 * 4] = 2 * (xy - zw);
-		matrix.matrix[2 + 0 * 4] = 2 * (xz + yw);
-		matrix.matrix[0 + 1 * 4] = 2 * (xy + zw);
+		matrix.matrix[1 + 0 * 4] = 2 * (xy + zw);
+		matrix.matrix[2 + 0 * 4] = 2 * (xz - yw);
+		matrix.matrix[0 + 1 * 4] = 2 * (xy - zw);
 		matrix.matrix[1 + 1 * 4] = 1 - 2 * (x2 + z2);
-		matrix.matrix[2 + 1 * 4] = 2 * (yz - xw);
-		matrix.matrix[0 + 2 * 4] = 2 * (xz - yw);
-		matrix.matrix[1 + 2 * 4] = 2 * (yz + xw);
+		matrix.matrix[2 + 1 * 4] = 2 * (yz + xw);
+		matrix.matrix[0 + 2 * 4] = 2 * (xz + yw);
+		matrix.matrix[1 + 2 * 4] = 2 * (yz - xw);
 		matrix.matrix[2 + 2 * 4] = 1 - 2 * (x2 + y2);
 		matrix.matrix[3 + 3 * 4] = 1;
 		return matrix;
 	}
+	
 	
 	public static Quaternion interpolate(Quaternion a, Quaternion b, float t) {
 		Quaternion result = new Quaternion(1, 0, 0, 0);

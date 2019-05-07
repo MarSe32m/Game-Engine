@@ -84,6 +84,10 @@ public class Vector3f {
 		z *= scalar;
 	}
 	
+	public Vector3f multiplied(float scalar) {
+		return new Vector3f(x * scalar, y * scalar, z * scalar);
+	}
+	
 	public void divide(float divident) {
 		multiply(1.0f/divident);
 	}
@@ -110,10 +114,10 @@ public class Vector3f {
 							x * other.y - y * other.x);
 	}
 	
-	public Vector3f cross(Vector3f a, Vector3f b) {
+	public static Vector3f cross(Vector3f a, Vector3f b) {
 		return new Vector3f(a.y * b.z - a.z * b.y,
-							a.z * b.x - x * b.z,
-							a.x * b.y - y * b.x);
+							a.z * b.x - a.x * b.z,
+							a.x * b.y - a.y * b.x);
 	}
 	
 }
