@@ -17,23 +17,76 @@ public class Camera {
 	
 	private boolean hasMoved = true;
 	
+	private Matrix4f viewMatrix = Matrix4f.identity();
+	
 	public Camera() {
 	}
 	
 	//TODO: Remove this after testing
 	public void move() {
+		Vector3f movementDirection = new Vector3f();
 		if(Input.isKeyDown(GLFW.GLFW_KEY_W)) {
-			transform.move(new Vector3f(0.0f, 0.0f, -0.01f));
+			movementDirection.z -= 0.1f;
 		}
 		if(Input.isKeyDown(GLFW.GLFW_KEY_S)) {
-			transform.move(new Vector3f(0.0f, 0.0f, 0.01f));
+			movementDirection.z += 0.1f;
 		}
 		if(Input.isKeyDown(GLFW.GLFW_KEY_A)) {
-			transform.move(new Vector3f(-0.01f, 0.0f, 0.0f));
+			movementDirection.x -= 0.1f;
 		}
 		if(Input.isKeyDown(GLFW.GLFW_KEY_D)) {
-			transform.move(new Vector3f(0.01f, 0.0f, 0.0f));
+			movementDirection.x += 0.1f;
 		}
+		if(movementDirection.lengthSquared() > 0)
+			transform.move(Quaternion.rotate(movementDirection, transform.getQuaternion()));
+	}
+	
+	
+	
+	public Matrix4f getViewMatrix() {
+		if(transform.changed()) {
+			transform.modificationsDone();
+			viewMatrix = transform.getTransformationMatrix().inversed();
+		}
+		return viewMatrix;
+	}
+	
+	public boolean isPointInside(Vector2f point) {
+		float width = CoreEngine.getOriginalWidth() / 2.0f;
+		float height = CoreEngine.getOriginalHeight() / 2.0f;
+		return point.x > -width && point.x < width && point.y > -height && point.y < height;
+	}
+	
+	public Vector2f[] getCorners() {
+		float width = CoreEngine.getOriginalWidth();
+		float height = CoreEngine.getOriginalHeight();
+		Vector2f[] corners = new Vector2f[4];
+		//Top right
+		corners[0] = new Vector2f(width / 2.0f, height / 2.0f).rotated(transform.getQuaternion().toEuler().z);
+		//Bottom right
+		corners[1] = new Vector2f(width / 2.0f, -height / 2.0f).rotated(transform.getQuaternion().toEuler().z);
+		//Bottom left
+		corners[2] = new Vector2f(-width / 2.0f, -height / 2.0f).rotated(transform.getQuaternion().toEuler().z);
+		//Top left
+		corners[3] = new Vector2f(-width / 2.0f, height / 2.0f).rotated(transform.getQuaternion().toEuler().z);
+		return corners;
+	}
+	
+	public void setProjection(float fov, float near, float far) {
+		this.fov = fov;
+		this.near = near;
+		this.far = far;
+	}
+	
+	public Matrix4f getPerspectiveProjection() {
+		float aspectRatio = (float)CoreEngine.getWidth() / (float)CoreEngine.getHeight();
+		return Matrix4f.perspectiveProjection(aspectRatio, fov, far, near);
+	}
+	
+	public Matrix4f getOrthogonalProjection() {
+		float width = CoreEngine.getOriginalWidth();
+		float height = CoreEngine.getOriginalHeight();
+		return Matrix4f.orthographic(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f, -100000.0f, 100000.0f);
 	}
 	
 	public Plane[] frustumPlanes() {
@@ -83,55 +136,6 @@ public class Camera {
 			frustumClippingPlanes[i].normalize();
 		
 		return frustumClippingPlanes;
-	}
-	
-	public Matrix4f getViewMatrix() {
-		Vector3f translation = transform.getPosition();
-		translation.multiply(-1);
-		Matrix4f translationMatrix = Matrix4f.translate(translation);
-		Vector3f scale = transform.getScale();
-		Matrix4f scaleMatrix = Matrix4f.scale(1.0f / scale.x, 1.0f / scale.y, 1.0f / scale.z);
-		Matrix4f rotation = transform.getQuaternion().rotationMatrix();
-		Matrix4f viewMatrix = Matrix4f.transformationMatrix(translationMatrix, scaleMatrix, rotation);
-		return viewMatrix;
-	}
-	
-	public boolean isPointInside(Vector2f point) {
-		float width = CoreEngine.getOriginalWidth() / 2.0f;
-		float height = CoreEngine.getOriginalHeight() / 2.0f;
-		return point.x > -width && point.x < width && point.y > -height && point.y < height;
-	}
-	
-	public Vector2f[] getCorners() {
-		float width = CoreEngine.getOriginalWidth();
-		float height = CoreEngine.getOriginalHeight();
-		Vector2f[] corners = new Vector2f[4];
-		//Top right
-		corners[0] = new Vector2f(width / 2.0f, height / 2.0f).rotated(transform.getQuaternion().toEuler().z);
-		//Bottom right
-		corners[1] = new Vector2f(width / 2.0f, -height / 2.0f).rotated(transform.getQuaternion().toEuler().z);
-		//Bottom left
-		corners[2] = new Vector2f(-width / 2.0f, -height / 2.0f).rotated(transform.getQuaternion().toEuler().z);
-		//Top left
-		corners[3] = new Vector2f(-width / 2.0f, height / 2.0f).rotated(transform.getQuaternion().toEuler().z);
-		return corners;
-	}
-	
-	public void setProjection(float fov, float near, float far) {
-		this.fov = fov;
-		this.near = near;
-		this.far = far;
-	}
-	
-	public Matrix4f getPerspectiveProjection() {
-		float aspectRatio = (float)CoreEngine.getWidth() / (float)CoreEngine.getHeight();
-		return Matrix4f.perspectiveProjection(aspectRatio, fov, far, near);
-	}
-	
-	public Matrix4f getOrthogonalProjection() {
-		float width = CoreEngine.getOriginalWidth();
-		float height = CoreEngine.getOriginalHeight();
-		return Matrix4f.orthographic(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f, -100000.0f, 100000.0f);
 	}
 	
 	public Transform getTransform() {
