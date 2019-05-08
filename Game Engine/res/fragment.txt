@@ -6,7 +6,8 @@ out vec4 out_Color;
 
 uniform sampler2D texSampler;
 uniform vec3 lightColour;
+uniform float alpha;
 
 void main(void) {
-	out_Color = texture(texSampler, pass_texCoords);
+	out_Color = vec4(texture(texSampler, pass_texCoords).xyz, alpha);
 }

@@ -9,6 +9,8 @@ public class Vector3f {
 	public float y;
 	public float z;
 	
+	public static Vector3f zero = new Vector3f();
+	
 	public Vector3f(float x, float y, float z) {
 		this.x = x;
 		this.y = y;

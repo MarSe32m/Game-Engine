@@ -2,6 +2,7 @@ package org.martin.input;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+import org.martin.core.*;
 import org.martin.event.*;
 import org.martin.math.*;
 import org.martin.scene.*;
@@ -78,6 +79,18 @@ public class Input {
 	public static void flush() {
 		s_Instance.mouse.flush();
 		s_Instance.keyboard.flush();
+	}
+	
+	public static void setMousePosition(Vector2f position) {
+		glfwSetCursorPos(s_Instance.mouse.window, position.x + CoreEngine.getWidth() / 2.0f, position.y + CoreEngine.getHeight() / 2.0f);
+	}
+	
+	public static void hideMouse() {
+		s_Instance.mouse.hide();
+	}
+	
+	public static void unhideMouse() {
+		s_Instance.mouse.unhide();
 	}
 	
 }

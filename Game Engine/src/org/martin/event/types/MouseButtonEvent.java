@@ -1,6 +1,7 @@
 package org.martin.event.types;
 
 import org.martin.event.*;
+import org.martin.math.*;
 
 public class MouseButtonEvent extends Event {
 
@@ -24,6 +25,10 @@ public class MouseButtonEvent extends Event {
 	
 	public float getY() {
 		return y;
+	}
+	
+	public Vector2f getPos() {
+		return new Vector2f(x, y);
 	}
 	
 }

@@ -25,6 +25,7 @@ public class EntityRenderer {
 			List<GameObject> modelBatch = batch.get(model);
 			//System.out.println(modelBatch.size());
 			for(GameObject object : modelBatch) {
+				shader.loadAplha(object.getMultipliedAlpha());
 				shader.loadTranformationMatrix(object.getWorldSpaceMatrix());
 				glDrawElements(GL_TRIANGLES, model.getRawModel().getVertexCount(), GL_UNSIGNED_INT, 0);
 			}

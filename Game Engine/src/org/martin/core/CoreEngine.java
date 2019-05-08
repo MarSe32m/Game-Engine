@@ -107,12 +107,12 @@ public class CoreEngine {
 		renderEngine  = new RenderEngine();
 		this.camera = renderEngine.camera;
 		Input.setScene(currentScene);
+		Input.getMouse().invoke(window, 0, 0, 0);
 		currentScene.init();
-		currentScene.didAppear();
+		currentScene.willAppear();
 	}
 	
 	private void engineLoop() {
-		Input.getMouse().invoke(window, 0, 0, 0);
 		setUpSizeCallBack();
 		double timePassed = -0.01;
 		double lastUpdateTime = Time.getTimeMillis();
@@ -138,7 +138,6 @@ public class CoreEngine {
 				//simulatePhysics(dt, currentScene); -> Physics Engine -> currentScene.didSimulatePhysics
 				//applyConstraints(dt); -> Constraints Engine -> currentScene.didApplyConstraints
 				Input.flush();
-				
 				updateTime = Time.getTimeMillis() - updateTime;
 				timePassed -= tickRate;
 				updates++;
@@ -201,7 +200,7 @@ public class CoreEngine {
 		currentScene = scene;
 		currentScene.setCoreEngine(this);
 		Input.setScene(currentScene);
-		currentScene.didAppear();
+		currentScene.willAppear();
 	}
 	
 	private void stop() {
@@ -250,6 +249,10 @@ public class CoreEngine {
 	
 	public void setPreferredFPS(int fps) {
 		preferredTickRate = fps > 300 ? 1.0 / (double) 300 : 1.0 / (double) fps;
+	}
+	
+	public void exit() {
+		glfwSetWindowShouldClose(window, true);
 	}
 	
 }

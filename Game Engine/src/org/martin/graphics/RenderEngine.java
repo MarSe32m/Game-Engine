@@ -24,9 +24,9 @@ public class RenderEngine {
 	
 	public void render(GameObject rootObject) {
 		rootObject.updateWorldSpaceMatrix(true);
-		for(GameObject object : rootObject.getChildren())
+		for(GameObject object : rootObject.getChildren()) {
 			_render(object);
-		
+		}
 		renderer.render(defaultLight, camera);
 	}
 
@@ -39,12 +39,12 @@ public class RenderEngine {
 		} else {
 			//TODO: Proper 2D object culling
 			renderer.batch(object);
-			//if(orthogonalCull(object))
 				
 		}
 		
-		for(GameObject obj : object.getChildren())
+		for(GameObject obj : object.getChildren()) {
 			_render(obj);
+		}
 		
 	}
 	

@@ -1,5 +1,8 @@
 package org.martin.applicationTesting;
 
+import org.lwjgl.glfw.*;
+import org.martin.core.*;
+import org.martin.event.*;
 import org.martin.event.types.*;
 import org.martin.graphics.models.primitives.*;
 import org.martin.input.*;
@@ -15,7 +18,7 @@ public class GameScene extends Scene3D {
 	Cube cube;
 	
 	@Override
-	public void didAppear() {
+	public void willAppear() {
 		cube = new Cube();
 		object2.setModel(cube);
 		object2.setScale(1f, 0.5f, 0.5f);
@@ -34,17 +37,30 @@ public class GameScene extends Scene3D {
 		}
 
 		object.setPosition(new Vector3f(0.0f, 0.0f, -10f));
+		Input.hideMouse();
 	}
+	
+	float lastX = 0.0f;
+	float lastY = 0.0f;
+	float cameraRot = 0.0f;
 	
 	@Override
 	public void update() {
+		
 		getCoreEngine().getMainCamera().move();
-		object.setRotation(Quaternion.rotation(Time.getElapsedTime() * 0.1f, -1, -1, 0));
+		object.setRotation(Quaternion.rotation(Time.getElapsedTime() * 0.01f * (float)Math.PI * 2f, 1, 1, 0));
+		Vector2f mousePos = Input.mousePos();
+		Camera mainCamera = getCoreEngine().getMainCamera();
+		float deltaX = mousePos.x;
+		float deltaY = mousePos.y;
+		if(deltaX != 0 || deltaY != 0)
+			mainCamera.getTransform().rotateBy(deltaY * Time.getDeltaTime() * 0.05f, -deltaX * Time.getDeltaTime() * 0.05f, 0);
+		Input.setMousePosition(new Vector2f());
 	}
 	
 	@Override
 	public void willDisappear() {
-		
+		Input.unhideMouse();
 	}
 
 	@Override
@@ -52,14 +68,17 @@ public class GameScene extends Scene3D {
 		return false;
 	}
 
+	
 	@Override
 	public boolean onMouseMove(MouseMovedEvent e) {
-		object.move(new Vector3f(Input.mouseDelta().x * 0.01f, Input.mouseDelta().y * 0.01f, 0));
 		return false;
 	}
 	
 	@Override
 	public boolean onKeyEvent(KeyEvent e) {
+		if(e.getType() == Event.Type.KEY_PRESSED)
+			if(e.getKeyCode() == GLFW.GLFW_KEY_ESCAPE)
+				getCoreEngine().exit();
 		return false;
 	}
 	

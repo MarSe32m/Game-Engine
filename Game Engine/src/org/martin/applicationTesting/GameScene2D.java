@@ -20,7 +20,7 @@ public class GameScene2D extends Scene2D {
 	GameObject objects[] = new GameObject[1000];
 	
 	@Override
-	public void didAppear() {
+	public void willAppear() {
 		sprite = new Sprite("texture");
 		sprite2 = new Sprite("default_texture");
 		object.setModel(sprite);
@@ -88,6 +88,9 @@ public class GameScene2D extends Scene2D {
 
 	@Override
 	public boolean onKeyEvent(KeyEvent e) {
+		if(e.getType() == Event.Type.KEY_PRESSED)
+			if(e.getKeyCode() == GLFW.GLFW_KEY_ESCAPE)
+				getCoreEngine().exit();
 		return false;
 	}
 

@@ -22,7 +22,7 @@ public class Mouse extends GLFWMouseButtonCallback {
 	private boolean[] buttons_up = new boolean[64];
 	private ArrayList<Integer> button_up_codes = new ArrayList<Integer>();
 	
-	private long window;
+	long window;
 	
 	public void invoke(long window, int button, int action, int mods) {
 		this.window = window;
@@ -102,6 +102,14 @@ public class Mouse extends GLFWMouseButtonCallback {
 		double x = xBuffer.get(0) - CoreEngine.getWidth() / 2.0;
 		double y = -yBuffer.get(0) + CoreEngine.getHeight() / 2.0;
 		currentPos = new Vector2f((float) x, (float) y);
+	}
+	
+	void hide() {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+	}
+	
+	void unhide() {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
 	
 }

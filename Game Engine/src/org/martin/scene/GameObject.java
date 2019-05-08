@@ -25,6 +25,10 @@ public class GameObject {
 	
 	public boolean isHidden = false;
 	
+	public float alpha = 1.0f;
+	
+	private float multipliedAlpha = 1.0f;
+	
 	public GameObject() {
 		objectID = GameObject.lastObjectID++;
 	}
@@ -134,16 +138,18 @@ public class GameObject {
 	
 	public final void updateWorldSpaceMatrix(boolean fromRoot) {
 		boolean wSM_isDirty = transform.changed();
+		transform.modificationsDone();
 		if (fromRoot) {
 			worldSpaceMatrix = transform.getTransformationMatrix();
+			multipliedAlpha = alpha;
 			if(wSM_isDirty) {
-				wSM_isDirty = false;
 				updateChildrenWorldSpaceMatrix();
 			} else {
 				for(GameObject child : children) {
 					if(child.transform.changed()) {
 						child.worldSpaceMatrix = worldSpaceMatrix.multiplyRight(child.getTransform().getTransformationMatrix());
 					}
+					child.multipliedAlpha = child.alpha * multipliedAlpha;
 					child.updateWorldSpaceMatrix(false);
 				}
 			}
@@ -152,17 +158,23 @@ public class GameObject {
 				wSM_isDirty = false;
 				updateChildrenWorldSpaceMatrix();
 			} else {
-				for(GameObject child : children)
+				for(GameObject child : children) {
 					child.updateWorldSpaceMatrix(false);
+				}
 			}
 		}
 	}
 	
 	private final void updateChildrenWorldSpaceMatrix() {
 		for(GameObject child : children) {
+			child.multipliedAlpha = child.alpha * multipliedAlpha;
 			child.worldSpaceMatrix = worldSpaceMatrix.multiplyRight(child.transform.getTransformationMatrix());
 			child.updateChildrenWorldSpaceMatrix();
 		}
+	}
+
+	public float getMultipliedAlpha() {
+		return multipliedAlpha;
 	}
 	
 }

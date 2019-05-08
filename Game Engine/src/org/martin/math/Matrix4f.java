@@ -172,19 +172,6 @@ public class Matrix4f {
 		return result;
 	}
 	
-//	public static Matrix4f perspectiveProjection(float fov, float far, float near) {
-//		Matrix4f result = Matrix4f.identity();
-//		float scale = 1.0f / (float)tan(toRadians(fov * 0.5f));
-//		result.matrix[0 + 0 * 4] = scale;
-//		result.matrix[1 + 1 * 4] = scale;
-//		result.matrix[2 + 2 * 4] = -far / (far - near);
-//		result.matrix[3 + 2 * 4] = -far * near / (far - near);
-//		result.matrix[2 + 3 * 4] = -1;
-//		result.matrix[3 + 3 * 4] = 0;
-//		
-//		return result;
-//	}
-	
 	public static Matrix4f perspectiveProjection(float aspectRatio, float fov, float far, float near) {
 		Matrix4f result = Matrix4f.identity();
 		float y_scale = (1f / (float)tan(toRadians(fov * 0.5f))) * aspectRatio;
@@ -203,7 +190,7 @@ public class Matrix4f {
 	public static Matrix4f perspectiveProjection(float left, float right, float top, float bottom, float near, float far) {
 		Matrix4f result = Matrix4f.identity();
 		
-		result.matrix[0 + 0 * 4] = 2-0f * near / (right - left);
+		result.matrix[0 + 0 * 4] = 2.0f * near / (right - left);
 		
 		result.matrix[1 + 1 * 4] = 2.0f * near / (top - bottom);
 		
@@ -219,7 +206,8 @@ public class Matrix4f {
 	}
 	
 	public static Matrix4f transformationMatrix(Matrix4f translation, Matrix4f scale, Matrix4f rotation) {
-		return translation.multiplyRight(rotation.multiplyRight(scale));
+		Matrix4f rotScale = rotation.multiplyRight(scale);
+		return translation.multiplyRight(rotScale);
 	}
 	
 	private void fill3x3With4x4(int x, int y, float[] array, float[] matrix) {

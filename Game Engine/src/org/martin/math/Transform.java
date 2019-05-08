@@ -26,6 +26,14 @@ public class Transform {
 		return rotationQ;
 	}
 	
+	public void rotateBy(float x, float y, float z) {
+		hasChanged = true;
+		rotation.x += x;
+		rotation.y += y;
+		rotation.z += z;
+		rotationQ = Quaternion.fromEuler(rotation);
+	}
+	
 	public void setRotation(Vector3f euler) {
 		hasChanged = true;
 		rotation = euler;
@@ -95,5 +103,9 @@ public class Transform {
 	
 	public boolean changed() {
 		return hasChanged;
+	}
+	
+	public void modificationsDone() {
+		hasChanged = false;
 	}
 }

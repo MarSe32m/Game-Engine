@@ -14,7 +14,7 @@ public abstract class Scene implements EventListener {
 	
 	public abstract void init();
 	
-	public abstract void didAppear();
+	public abstract void willAppear();
 	
 	public abstract void willDisappear();
 	

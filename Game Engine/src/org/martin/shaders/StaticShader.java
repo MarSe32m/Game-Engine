@@ -13,6 +13,8 @@ public class StaticShader extends ShaderProgram {
 	private int location_projectionMatrix;
 	private int location_viewMatrix;
 	
+	private int location_alpha;
+	
 	private int location_lightPosition;
 	private int location_lightColour;
 	
@@ -32,8 +34,13 @@ public class StaticShader extends ShaderProgram {
 		location_transformationMatrix = super.getUniformLocation("transformationMatrix");
 		location_projectionMatrix = super.getUniformLocation("projectionMatrix");
 		location_viewMatrix = super.getUniformLocation("viewMatrix");
+		location_alpha = super.getUniformLocation("alpha");
 		location_lightPosition = super.getUniformLocation("lightPosition");
 		location_lightColour = super.getUniformLocation("lightColour");
+	}
+	
+	public void loadAplha(float alpha) {
+		super.loadFloat(location_alpha, alpha);
 	}
 	
 	public void loadTranformationMatrix(Matrix4f matrix) {
