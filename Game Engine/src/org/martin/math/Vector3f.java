@@ -122,4 +122,9 @@ public class Vector3f {
 							a.x * b.y - a.y * b.x);
 	}
 	
+	@Override
+	  public String toString() {
+	    return "(" + x + ", " + y + ", " + z + ")";
+	  }
+	
 }

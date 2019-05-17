@@ -141,32 +141,26 @@ public class CoreEngine {
 				updateTime = Time.getTimeMillis() - updateTime;
 				timePassed -= tickRate;
 				updates++;
+				
+				renders++;
+				renderEngine.render(currentScene.getRootObject());
+				int error = glGetError();
+				if(error != GL_NO_ERROR)
+					System.err.println(error);
+				
+				glfwSwapBuffers(window);
 			}
 			
-			renders++;
-			renderEngine.render(currentScene.getRootObject());
 			
-			int error = glGetError();
-			if(error != GL_NO_ERROR)
-				System.err.println(error);
 			
-			glfwSwapBuffers(window);
+			
 			
 			dynamicDelta = (currentTime - lastDynamicLoopTime) / 1000.0;
 			lastDynamicLoopTime = currentTime;
 			timePassed += dynamicDelta;
 			
 			if(currentTime - lastTickRateCheck >= 1000) {
-				glfwSetWindowTitle(window, title + ", UPS: " + updates + ", FPS: " + renders + ", " + "delta time: " + Time.getDeltaTime());
-				if(updates > renders) {
-					if(tickRate >= 31)
-						tickRate -= 1;
-				} else {
-					if (tickRate < preferredTickRate) {
-						tickRate += 1;
-					}
-				}
-				
+				glfwSetWindowTitle(window, title + ", UPS: " + updates + ", FPS: " + renders + ", " + "DT: " + Time.getDeltaTime() + ", CAM: " + camera.getTransform().getPosition());
 				
 				lastTickRateCheck = currentTime;
 				updates = 0;

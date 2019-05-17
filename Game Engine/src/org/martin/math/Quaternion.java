@@ -181,15 +181,15 @@ public class Quaternion {
 		float dot = a.dot(b);
 		float blend = 1f - t;
 		if(dot < 0) {
-			result.w = blend * a.w - blend * b.w;
-			result.x = blend * a.x - blend * b.x;
-			result.y = blend * a.y - blend * b.y;
-			result.z = blend * a.z - blend * b.z;
+			result.w = blend * a.w - t * b.w;
+			result.x = blend * a.x - t * b.x;
+			result.y = blend * a.y - t * b.y;
+			result.z = blend * a.z - t * b.z;
 		} else {
-			result.w = blend * a.w + blend * b.w;
-			result.x = blend * a.x + blend * b.x;
-			result.y = blend * a.y + blend * b.y;
-			result.z = blend * a.z + blend * b.z;
+			result.w = blend * a.w + t * b.w;
+			result.x = blend * a.x + t * b.x;
+			result.y = blend * a.y + t * b.y;
+			result.z = blend * a.z + t * b.z;
 		}
 		return result;
 	}

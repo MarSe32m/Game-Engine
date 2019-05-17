@@ -23,7 +23,6 @@ public class EntityRenderer {
 		for(TexturedModel model : batch.keySet()) {
 			prepareTexturedModel(model);
 			List<GameObject> modelBatch = batch.get(model);
-			//System.out.println(modelBatch.size());
 			for(GameObject object : modelBatch) {
 				shader.loadAplha(object.getMultipliedAlpha());
 				shader.loadTranformationMatrix(object.getWorldSpaceMatrix());

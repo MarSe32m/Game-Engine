@@ -33,13 +33,13 @@ public class RenderEngine {
 	private void _render(GameObject object) {
 		if(object.isHidden)
 			return;
+		
 		if(type == ProjectionType.PERSPECTIVE) {
 			if(frustumCull(object, object.getCullingRadius()))
 				renderer.batch(object);
 		} else {
 			//TODO: Proper 2D object culling
 			renderer.batch(object);
-				
 		}
 		
 		for(GameObject obj : object.getChildren()) {

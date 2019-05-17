@@ -17,6 +17,10 @@ public class Camera {
 	
 	private boolean hasMoved = true;
 	
+	public boolean isArcball = false;
+	public float arcDistance = 3.0f;
+	public Vector3f targetPos = new Vector3f();
+	
 	private Matrix4f viewMatrix = Matrix4f.identity();
 	
 	public Camera() {
@@ -42,20 +46,49 @@ public class Camera {
 	}
 	
 	
-	
+	/**
+	 * 
+	 * @return Returns the view matrix, depending on if camera is on arcball mode or not
+	 */
 	public Matrix4f getViewMatrix() {
 		if(transform.changed()) {
 			transform.modificationsDone();
 			viewMatrix = transform.getTransformationMatrix().inversed();
 		}
+		if(isArcball)
+			return arcBallCameraViewMatrix();
 		return viewMatrix;
 	}
+	
+	/**
+	 * 
+	 * @return Returns view matrix for an arcball camera
+	 */
+	
+	public Matrix4f arcBallCameraViewMatrix() {
+		Vector3f t = new Vector3f(0, -2f, -arcDistance);
+		Matrix4f distanceTranslation = Matrix4f.translate(t);
+		Matrix4f rotation = transform.getQuaternion().inverse().rotationMatrix();
+		Matrix4f translation = Matrix4f.translate(targetPos.multiplied(-1f));
+		return distanceTranslation.multiplyRight(rotation.multiplyRight(translation));
+	}
+	
+	/**
+	 * 
+	 * @param point The point to make the check for
+	 * @return Returns true if the given point is inside the view
+	 */
 	
 	public boolean isPointInside(Vector2f point) {
 		float width = CoreEngine.getOriginalWidth() / 2.0f;
 		float height = CoreEngine.getOriginalHeight() / 2.0f;
 		return point.x > -width && point.x < width && point.y > -height && point.y < height;
 	}
+	
+	/**
+	 * 
+	 * @return Returns the corners of the view, top left: -w/2, h/2, etc.
+	 */
 	
 	public Vector2f[] getCorners() {
 		float width = CoreEngine.getOriginalWidth();
@@ -71,6 +104,13 @@ public class Camera {
 		corners[3] = new Vector2f(-width / 2.0f, height / 2.0f).rotated(transform.getQuaternion().toEuler().z);
 		return corners;
 	}
+	
+	/**
+	 * 
+	 * @param fov Field of View
+	 * @param near Near plane distance
+	 * @param far Far plane distance
+	 */
 	
 	public void setProjection(float fov, float near, float far) {
 		this.fov = fov;
@@ -88,6 +128,11 @@ public class Camera {
 		float height = CoreEngine.getOriginalHeight();
 		return Matrix4f.orthographic(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f, -100000.0f, 100000.0f);
 	}
+	
+	/**
+	 * 
+	 * @return Return an array of planes that represent the frustum planes of a camera
+	 */
 	
 	public Plane[] frustumPlanes() {
 		hasMoved = transform.changed();
