@@ -7,7 +7,7 @@ The first task is to make the engine easy to use but still have some reasonably 
 
 Next step would be to create some kind of editor for it so that game creation would be easier right out of the box. First this editor will simply be a level editor for placing objects in the game world. After that I might attempt on doing a "Scripting" solution so that people can attach their "scripts" on their game objects. BUT, there is never going to be a plan to introduce a scripting language or integrate any currently used scripting language (lua, C# etc) to the engine, every possible script is going to be in Java.
 
-Finally somekind of networking framework so that synchronizing game states etc. would be effectivily be just one liners. In addition I would create some kind of demo game using this engine.
+Finally somekind of networking framework so that synchronizing game states etc. would effectivily be just one liners. In addition I would create some kind of demo game using this engine.
 
 Now note that:
 - This engine will not be a competitor to Unity or Unreal.
